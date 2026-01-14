@@ -23,7 +23,7 @@ const handler: PlasmoMessaging.MessageHandler<
     if (!reflection || reflection.trim().length === 0) {
       res.send({
         success: false,
-        error: "振り返り内容を入力してください"
+        error: "振り返り内容を入力してください",
       });
       return;
     }
@@ -33,7 +33,7 @@ const handler: PlasmoMessaging.MessageHandler<
     if (!currentSession) {
       res.send({
         success: false,
-        error: "セッションが見つかりません"
+        error: "セッションが見つかりません",
       });
       return;
     }
@@ -58,7 +58,7 @@ const handler: PlasmoMessaging.MessageHandler<
     console.error("Error saving reflection:", error);
     res.send({
       success: false,
-      error: "振り返りの保存に失敗しました"
+      error: "振り返りの保存に失敗しました",
     });
   }
 };

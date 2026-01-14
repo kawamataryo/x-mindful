@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { DashboardStats } from "~components/DashboardStats";
 import { useSettings } from "~hooks/useSettings";
 import { useDashboard } from "~hooks/useDashboard";
@@ -6,12 +6,8 @@ import "~styles/global.css";
 
 function Popup() {
   const { settings, loadSettings } = useSettings();
-  const {
-    todayUsage,
-    dashboardRemainingMinutes,
-    dashboardLoading,
-    loadDashboardData,
-  } = useDashboard();
+  const { todayUsage, dashboardRemainingMinutes, dashboardLoading, loadDashboardData } =
+    useDashboard();
 
   useEffect(() => {
     const initialize = async () => {
@@ -43,9 +39,7 @@ function Popup() {
       <div className="p-4">
         <header className="mb-4">
           <h1 className="text-xl font-bold text-gray-800">X Blocker</h1>
-          <p className="text-sm text-gray-600 mt-1">
-            今日の利用状況
-          </p>
+          <p className="text-sm text-gray-600 mt-1">今日の利用状況</p>
         </header>
 
         <DashboardStats

@@ -8,17 +8,17 @@ export type EndSessionResponse = {
   error?: string;
 };
 
-const handler: PlasmoMessaging.MessageHandler<
-  EndSessionRequest,
-  EndSessionResponse
-> = async (req, res) => {
+const handler: PlasmoMessaging.MessageHandler<EndSessionRequest, EndSessionResponse> = async (
+  req,
+  res,
+) => {
   try {
     const currentSession = await getCurrentSession();
 
     if (!currentSession) {
       res.send({
         success: false,
-        error: "アクティブなセッションがありません"
+        error: "アクティブなセッションがありません",
       });
       return;
     }
@@ -36,7 +36,7 @@ const handler: PlasmoMessaging.MessageHandler<
     console.error("Error ending session:", error);
     res.send({
       success: false,
-      error: "セッションの終了に失敗しました"
+      error: "セッションの終了に失敗しました",
     });
   }
 };

@@ -80,24 +80,6 @@ function stopTimer() {
 }
 
 /**
- * 全タブに通知を送信（非推奨：新しい実装では使用しない）
- */
-async function notifyAllTabs(message: string) {
-  try {
-    const tabs = await chrome.tabs.query({});
-    for (const tab of tabs) {
-      if (tab.id) {
-        chrome.tabs.sendMessage(tab.id, { type: message }).catch(() => {
-          // タブが応答しない場合は無視
-        });
-      }
-    }
-  } catch (error) {
-    console.error("Error notifying tabs:", error);
-  }
-}
-
-/**
  * すべてのX.comタブを振り返り画面にリダイレクト
  */
 async function redirectXTabsToReflection() {
@@ -118,17 +100,21 @@ async function redirectXTabsToReflection() {
 /**
  * タブのURLが変更されたときの処理
  */
-async function handleTabUpdate(tabId: number, changeInfo: chrome.tabs.TabChangeInfo, tab: chrome.tabs.Tab) {
+async function handleTabUpdate(
+  tabId: number,
+  changeInfo: chrome.tabs.TabChangeInfo,
+  tab: chrome.tabs.Tab,
+) {
   // URLが変更されたか、ページ読み込みが完了した時にチェック
   if (changeInfo.url || changeInfo.status === "complete") {
     const currentUrl = changeInfo.url || tab.url;
-    
+
     if (!currentUrl) {
       return;
     }
 
     console.log("[X Blocker] Tab update detected:", currentUrl);
-    
+
     const isTarget = isTimerTargetPage(currentUrl);
     console.log("[X Blocker] Is target page:", isTarget);
 
@@ -141,7 +127,7 @@ async function handleTabUpdate(tabId: number, changeInfo: chrome.tabs.TabChangeI
       if (!session || !session.isActive || session.remainingSeconds <= 0) {
         console.log("[X Blocker] No active session, redirecting to start-session");
         await chrome.tabs.update(tabId, {
-          url: chrome.runtime.getURL("options.html?view=start-session")
+          url: chrome.runtime.getURL("options.html?view=start-session"),
         });
         return;
       }
@@ -197,24 +183,24 @@ async function restoreState() {
  */
 async function resetAtMidnightLocal() {
   console.log("[X Blocker] Resetting at midnight (local TZ)");
-  
+
   // セッションをリセット
   const session = await getCurrentSession();
   if (session) {
     await saveCurrentSession(null);
     stopTimer();
-    
+
     // すべてのX.comタブをセッション開始画面にリダイレクト
     const tabs = await chrome.tabs.query({});
     const startUrl = chrome.runtime.getURL("options.html?view=start-session");
-    
+
     for (const tab of tabs) {
       if (tab.id && tab.url && isTimerTargetPage(tab.url)) {
         await chrome.tabs.update(tab.id, { url: startUrl });
       }
     }
   }
-  
+
   // 次の0:00までのタイマーを再設定
   scheduleMidnightReset();
 }
@@ -227,7 +213,7 @@ let midnightResetTimeout: NodeJS.Timeout | null = null;
 function scheduleMidnightReset() {
   const msUntilMidnight = getMillisecondsUntilMidnightLocal();
   console.log(`[X Blocker] Scheduling reset in ${Math.floor(msUntilMidnight / 1000 / 60)} minutes`);
-  
+
   if (midnightResetTimeout) {
     clearTimeout(midnightResetTimeout);
     midnightResetTimeout = null;
@@ -255,18 +241,18 @@ setInterval(async () => {
     if (session) {
       await saveCurrentSession(null);
       stopTimer();
-      
+
       // すべてのX.comタブをセッション開始画面にリダイレクト
       const tabs = await chrome.tabs.query({});
       const startUrl = chrome.runtime.getURL("options.html?view=start-session");
-      
+
       for (const tab of tabs) {
         if (tab.id && tab.url && isTimerTargetPage(tab.url)) {
           await chrome.tabs.update(tab.id, { url: startUrl });
         }
       }
     }
-    
+
     // 次の0:00までのタイマーを再設定
     scheduleMidnightReset();
   }
@@ -293,14 +279,14 @@ chrome.tabs.onCreated.addListener(async (tab) => {
   if (tab.id && tab.url) {
     console.log("[X Blocker] Tab created:", tab.url);
     const isTarget = isTimerTargetPage(tab.url);
-    
+
     if (isTarget) {
       const session = await getCurrentSession();
-      
+
       if (!session || !session.isActive || session.remainingSeconds <= 0) {
         console.log("[X Blocker] Redirecting new tab to start-session");
         await chrome.tabs.update(tab.id, {
-          url: chrome.runtime.getURL("options.html?view=start-session")
+          url: chrome.runtime.getURL("options.html?view=start-session"),
         });
       }
     }
@@ -309,7 +295,7 @@ chrome.tabs.onCreated.addListener(async (tab) => {
 
 // ストレージの変更を監視してタイマーを開始/停止
 storage.watch({
-  "currentSession": (change) => {
+  currentSession: (change) => {
     const session = change.newValue;
 
     if (session && session.isActive && session.remainingSeconds > 0) {
@@ -317,7 +303,7 @@ storage.watch({
     } else {
       stopTimer();
     }
-  }
+  },
 });
 
 console.log("X Blocker background script loaded");

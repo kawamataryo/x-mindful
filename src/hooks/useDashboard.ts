@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { DailyUsage, SessionRecord } from "~lib/types";
-import { getSettings, getAllDailyUsage, getDailyUsage, getRemainingMinutes } from "~lib/storage";
+import { getAllDailyUsage, getDailyUsage, getRemainingMinutes } from "~lib/storage";
 
 // セッション記録に日付情報を追加した型
 export interface SessionRecordWithDate extends SessionRecord {
@@ -54,13 +54,12 @@ export function useDashboard() {
   const loadDashboardData = async (skipSessions = false) => {
     setDashboardLoading(true);
     try {
-      const currentSettings = await getSettings();
       const todayData = await getDailyUsage();
       const remaining = await getRemainingMinutes();
 
       setTodayUsage(todayData);
       setDashboardRemainingMinutes(remaining);
-      
+
       if (!skipSessions) {
         await loadAllSessions();
         await loadDailyUsageHistory();

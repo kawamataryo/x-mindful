@@ -7,21 +7,14 @@ interface DailyUsageChartProps {
 
 export function DailyUsageChart({ dailyUsageHistory, dailyLimitMinutes }: DailyUsageChartProps) {
   if (dailyUsageHistory.length === 0) {
-    return (
-      <div className="text-center text-gray-500 py-8">
-        データがありません
-      </div>
-    );
+    return <div className="text-center text-gray-500 py-8">データがありません</div>;
   }
 
   // 直近30日分を「古い→新しい」順にして描画（視認性向上）
   const data = [...dailyUsageHistory].reverse();
 
   // 最大値を計算（上限時間の1.2倍か、実際の最大値の大きい方）
-  const maxValue = Math.max(
-    dailyLimitMinutes * 1.2,
-    ...data.map((d) => d.totalUsedMinutes)
-  );
+  const maxValue = Math.max(dailyLimitMinutes * 1.2, ...data.map((d) => d.totalUsedMinutes));
 
   // 日付をフォーマット（MM/DD形式）
   const formatDate = (dateStr: string): string => {
@@ -40,10 +33,7 @@ export function DailyUsageChart({ dailyUsageHistory, dailyLimitMinutes }: DailyU
       <div className="bg-gray-50 rounded-lg p-4">
         <div className="relative">
           {/* グリッド + Y軸ラベル */}
-          <div
-            className="relative"
-            style={{ height: `${chartHeightPx}px` }}
-          >
+          <div className="relative" style={{ height: `${chartHeightPx}px` }}>
             {[0, 0.25, 0.5, 0.75, 1].map((ratio) => {
               const value = Math.round(maxValue * ratio);
               const bottomPx = Math.round(ratio * chartHeightPx);
@@ -64,10 +54,7 @@ export function DailyUsageChart({ dailyUsageHistory, dailyLimitMinutes }: DailyU
             })}
 
             {/* 上限ライン */}
-            <div
-              className="absolute left-0 right-0"
-              style={{ bottom: `${limitLineBottomPx}px` }}
-            >
+            <div className="absolute left-0 right-0" style={{ bottom: `${limitLineBottomPx}px` }}>
               <div className="flex items-center gap-2">
                 <div className="w-12" />
                 <div className="flex-1 border-t-2 border-dashed border-red-400" />
@@ -125,10 +112,8 @@ export function DailyUsageChart({ dailyUsageHistory, dailyLimitMinutes }: DailyU
           </div>
           {dailyUsageHistory.length > 0 && (
             <div className="ml-auto text-xs text-gray-500">
-              平均: {Math.round(
-                data.reduce((sum, d) => sum + d.totalUsedMinutes, 0) /
-                  data.length
-              )}分/日
+              平均: {Math.round(data.reduce((sum, d) => sum + d.totalUsedMinutes, 0) / data.length)}
+              分/日
             </div>
           )}
         </div>

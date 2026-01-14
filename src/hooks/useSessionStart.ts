@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Storage } from "@plasmohq/storage";
 import { sendToBackground } from "@plasmohq/messaging";
 import { getSettings } from "~lib/storage";
@@ -17,7 +17,7 @@ export function useSessionStart() {
   const [activeSession, setActiveSession] = useState<Session | null>(null);
 
   // セッション開始画面用データをロード
-  const loadSessionStartData = async () => {
+  const loadSessionStartData = useCallback(async () => {
     try {
       const currentSettings = await getSettings();
       setPresets(currentSettings.presetMinutes);
@@ -31,14 +31,14 @@ export function useSessionStart() {
 
       const remaining = Math.max(
         0,
-        currentSettings.dailyLimitMinutes - todayUsage.totalUsedMinutes
+        currentSettings.dailyLimitMinutes - todayUsage.totalUsedMinutes,
       );
       setRemainingMinutes(remaining);
     } catch (error) {
       console.error("Error loading session start data:", error);
       setStartError("データの読み込みに失敗しました");
     }
-  };
+  }, []);
 
   // セッション開始画面：プリセット選択
   const handlePresetClick = async (minutes: number) => {
@@ -58,7 +58,7 @@ export function useSessionStart() {
   };
 
   // セッション開始画面：カスタム入力
-  const handleCustomChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleCustomChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setCustomMinutes(value);
 
@@ -74,59 +74,62 @@ export function useSessionStart() {
     }
 
     setStartError("");
-  };
+  }, []);
 
   // セッション開始
-  const handleStartSession = async (minutesParam?: number) => {
-    // 既にアクティブなセッションがある場合は再開扱いにする
-    const currentSession = await storage.get<Session>("currentSession");
-    if (currentSession && currentSession.isActive && currentSession.remainingSeconds > 0) {
-      window.location.replace("https://x.com/home");
-      return;
-    }
-
-    const minutes = minutesParam ?? selectedMinutes;
-
-    if (!minutes) {
-      setStartError("時間を選択してください");
-      return;
-    }
-
-    if (minutes > remainingMinutes) {
-      setStartError(`本日の残り利用可能時間は${remainingMinutes}分です`);
-      return;
-    }
-
-    setStartLoading(true);
-    setStartError("");
-
-    try {
-      const response = await sendToBackground({
-        name: "start-session",
-        body: { durationMinutes: minutes },
-      });
-
-      if (response.success) {
-        // 履歴を置き換えてXへ遷移（戻るでセッション開始画面に戻れない）
+  const handleStartSession = useCallback(
+    async (minutesParam?: number) => {
+      // 既にアクティブなセッションがある場合は再開扱いにする
+      const currentSession = await storage.get<Session>("currentSession");
+      if (currentSession && currentSession.isActive && currentSession.remainingSeconds > 0) {
         window.location.replace("https://x.com/home");
-      } else {
-        setStartError(response.error || "セッションの開始に失敗しました");
+        return;
       }
-    } catch (err) {
-      console.error("Error starting session:", err);
-      setStartError("セッションの開始に失敗しました");
-    } finally {
-      setStartLoading(false);
-    }
-  };
+
+      const minutes = minutesParam ?? selectedMinutes;
+
+      if (!minutes) {
+        setStartError("時間を選択してください");
+        return;
+      }
+
+      if (minutes > remainingMinutes) {
+        setStartError(`本日の残り利用可能時間は${remainingMinutes}分です`);
+        return;
+      }
+
+      setStartLoading(true);
+      setStartError("");
+
+      try {
+        const response = await sendToBackground({
+          name: "start-session",
+          body: { durationMinutes: minutes },
+        });
+
+        if (response.success) {
+          // 履歴を置き換えてXへ遷移（戻るでセッション開始画面に戻れない）
+          window.location.replace("https://x.com/home");
+        } else {
+          setStartError(response.error || "セッションの開始に失敗しました");
+        }
+      } catch (err) {
+        console.error("Error starting session:", err);
+        setStartError("セッションの開始に失敗しました");
+      } finally {
+        setStartLoading(false);
+      }
+    },
+    [remainingMinutes, selectedMinutes],
+  );
 
   // セッション再開（Xへ戻る）
-  const handleResumeSession = () => {
+  const handleResumeSession = useCallback(() => {
     window.location.replace("https://x.com/home");
-  };
+  }, []);
 
   // セッション終了
-  const handleEndSession = async () => {
+  const handleEndSession = useCallback(async () => {
     setStartLoading(true);
     setStartError("");
     try {
@@ -147,7 +150,7 @@ export function useSessionStart() {
     } finally {
       setStartLoading(false);
     }
-  };
+  }, [loadSessionStartData]);
 
   return {
     remainingMinutes,

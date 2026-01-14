@@ -1,13 +1,8 @@
 import { useReflection } from "~hooks/useReflection";
 
 export function ReflectionView() {
-  const {
-    reflection,
-    setReflection,
-    reflectionLoading,
-    reflectionError,
-    handleSaveReflection,
-  } = useReflection();
+  const { reflection, setReflection, reflectionLoading, reflectionError, handleSaveReflection } =
+    useReflection();
 
   const canSave = reflection.trim().length > 0 && !reflectionLoading;
 
@@ -15,18 +10,12 @@ export function ReflectionView() {
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl">
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">
-            セッション終了
-          </h2>
-          <p className="text-lg text-gray-600">
-            この時間で何を得られましたか？
-          </p>
+          <h2 className="text-4xl font-bold text-gray-800 mb-3">セッション終了</h2>
+          <p className="text-lg text-gray-600">この時間で何を得られましたか？</p>
         </div>
 
         <div className="mb-6">
-          <label className="block mb-3 font-semibold text-gray-700">
-            振り返り（必須）
-          </label>
+          <label className="block mb-3 font-semibold text-gray-700">振り返り（必須）</label>
           <textarea
             value={reflection}
             onChange={(e) => setReflection(e.target.value)}
@@ -40,17 +29,13 @@ export function ReflectionView() {
             placeholder="例: 新しい技術のトレンドを3つ発見できた"
             rows={5}
             disabled={reflectionLoading}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-base resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-400 text-base resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
           />
-          <p className="text-sm text-gray-500 mt-2">
-            {reflection.trim().length}文字
-          </p>
+          <p className="text-sm text-gray-500 mt-2">{reflection.trim().length}文字</p>
         </div>
 
         {reflectionError && (
-          <p className="text-red-600 mb-4 text-sm text-center font-medium">
-            {reflectionError}
-          </p>
+          <p className="text-red-600 mb-4 text-sm text-center font-medium">{reflectionError}</p>
         )}
 
         <button

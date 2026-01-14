@@ -1,15 +1,6 @@
 import { Storage } from "@plasmohq/storage";
-import type {
-  Settings,
-  Session,
-  DailyUsage,
-  SessionRecord,
-} from "./types";
-import {
-  STORAGE_KEYS,
-  DEFAULT_SETTINGS,
-  getToday,
-} from "./types";
+import type { Settings, Session, DailyUsage, SessionRecord } from "./types";
+import { STORAGE_KEYS, DEFAULT_SETTINGS, getToday } from "./types";
 
 const storage = new Storage();
 
@@ -41,18 +32,22 @@ export async function saveCurrentSession(session: Session | null): Promise<void>
 // 日次データの取得
 export async function getDailyUsage(date?: string): Promise<DailyUsage> {
   const targetDate = date || getToday();
-  const allDailyUsage = await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE) || {};
+  const allDailyUsage =
+    (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
 
-  return allDailyUsage[targetDate] || {
-    date: targetDate,
-    totalUsedMinutes: 0,
-    sessions: [],
-  };
+  return (
+    allDailyUsage[targetDate] || {
+      date: targetDate,
+      totalUsedMinutes: 0,
+      sessions: [],
+    }
+  );
 }
 
 // 日次データの保存
 export async function saveDailyUsage(dailyUsage: DailyUsage): Promise<void> {
-  const allDailyUsage = await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE) || {};
+  const allDailyUsage =
+    (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
   allDailyUsage[dailyUsage.date] = dailyUsage;
   await storage.set(STORAGE_KEYS.DAILY_USAGE, allDailyUsage);
 }
@@ -70,7 +65,8 @@ export async function addSessionRecord(record: SessionRecord): Promise<void> {
 
 // 全日次データの取得（履歴表示用）
 export async function getAllDailyUsage(): Promise<DailyUsage[]> {
-  const allDailyUsage = await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE) || {};
+  const allDailyUsage =
+    (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
   return Object.values(allDailyUsage).sort((a, b) => b.date.localeCompare(a.date));
 }
 

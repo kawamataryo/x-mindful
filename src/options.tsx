@@ -19,7 +19,7 @@ function getViewMode(): ViewMode {
 
 function OptionsPage() {
   const [viewMode, setViewMode] = useState<ViewMode>(getViewMode());
-  const [dashboardReloadKey, setDashboardReloadKey] = useState(0);
+  const [dashboardReloadKey] = useState(0);
   const { settings, loadSettings } = useSettings();
 
   useEffect(() => {

@@ -5,7 +5,6 @@ import "~styles/global.css";
 
 function SettingsPage() {
   const {
-    settings,
     dailyLimit,
     setDailyLimit,
     presetInput,
@@ -14,7 +13,6 @@ function SettingsPage() {
     saving,
     message,
     loadSettings,
-    handleSaveSettings,
     handleAddPreset,
     handleRemovePreset,
   } = useSettings();
@@ -23,54 +21,46 @@ function SettingsPage() {
     loadSettings();
   }, [loadSettings]);
 
-  const handleSave = async () => {
-    await handleSaveSettings(async () => {
-      // 設定保存後にダッシュボードに戻る
-      setTimeout(() => {
-        window.location.href = chrome.runtime.getURL("options.html");
-      }, 1000);
-    });
-  };
-
   const handleBack = () => {
     window.location.href = chrome.runtime.getURL("options.html");
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-4xl mx-auto py-8 px-4">
+      <div className="max-w-6xl mx-auto py-8 px-4">
         <header className="mb-8">
-          <div className="flex items-center gap-4 mb-2">
-            <button
-              onClick={handleBack}
-              className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-200 rounded-lg transition-colors"
-              title="戻る"
-              aria-label="戻る"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
+          <div className="flex justify-between items-start">
+            <div className="flex items-start gap-4">
+              <button
+                onClick={handleBack}
+                className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                title="戻る"
+                aria-label="戻る"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 19l-7-7 7-7"
-                />
-              </svg>
-            </button>
-            <h1 className="text-3xl font-bold text-gray-800">基本設定</h1>
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 19l-7-7 7-7"
+                  />
+                </svg>
+              </button>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800">基本設定</h1>
+                <p className="text-gray-600 mt-2">X（旧Twitter）の利用制限に関する設定を行います</p>
+              </div>
+            </div>
           </div>
-          <p className="text-gray-600 ml-12">
-            X（旧Twitter）の利用制限に関する設定を行います
-          </p>
         </header>
 
         <SettingsForm
-          settings={settings}
           dailyLimit={dailyLimit}
           setDailyLimit={setDailyLimit}
           presetInput={presetInput}
@@ -80,7 +70,6 @@ function SettingsPage() {
           message={message}
           onAddPreset={handleAddPreset}
           onRemovePreset={handleRemovePreset}
-          onSave={handleSave}
         />
       </div>
     </div>

@@ -21,7 +21,7 @@ export function SessionStartView() {
 
   useEffect(() => {
     loadSessionStartData();
-  }, []);
+  }, [loadSessionStartData]);
 
   // 既にセッション中なら「再開」導線を出す（戻る/Reload等でここに来ても継続できる）
   if (activeSession && activeSession.isActive && activeSession.remainingSeconds > 0) {
@@ -29,18 +29,13 @@ export function SessionStartView() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
-          <h2 className="text-3xl font-bold text-gray-800 mb-3 text-center">
-            セッション継続中
-          </h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-3 text-center">セッション継続中</h2>
           <p className="text-gray-600 text-center mb-6">
-            残り時間:{" "}
-            <strong className="text-2xl text-blue-600">{remaining}</strong>
+            残り時間: <strong className="text-2xl text-blue-600">{remaining}</strong>
           </p>
 
           {startError && (
-            <p className="text-red-600 mb-4 text-sm text-center font-medium">
-              {startError}
-            </p>
+            <p className="text-red-600 mb-4 text-sm text-center font-medium">{startError}</p>
           )}
 
           <div className="flex flex-col gap-3">
@@ -67,18 +62,15 @@ export function SessionStartView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">
-          X利用セッション開始
-        </h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">X利用セッション開始</h2>
 
         <p className="text-gray-600 text-center mb-6">
-          本日の残り利用可能時間: <strong className="text-2xl text-blue-600">{remainingMinutes}分</strong>
+          本日の残り利用可能時間:{" "}
+          <strong className="text-2xl text-blue-600">{remainingMinutes}分</strong>
         </p>
 
         <div className="mb-6">
-          <label className="block mb-3 font-medium text-gray-700">
-            利用時間を選択
-          </label>
+          <label className="block mb-3 font-medium text-gray-700">利用時間を選択</label>
           <div className="grid grid-cols-2 gap-3">
             {presets.map((minutes) => (
               <button
@@ -102,23 +94,19 @@ export function SessionStartView() {
         </div>
 
         <div className="mb-6">
-          <label className="block mb-2 font-medium text-gray-700">
-            カスタム時間（分）
-          </label>
+          <label className="block mb-2 font-medium text-gray-700">カスタム時間（分）</label>
           <input
             type="number"
             value={customMinutes}
             onChange={handleCustomChange}
             placeholder="例: 15"
             disabled={startLoading}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-400 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
           />
         </div>
 
         {startError && (
-          <p className="text-red-600 mb-4 text-sm text-center font-medium">
-            {startError}
-          </p>
+          <p className="text-red-600 mb-4 text-sm text-center font-medium">{startError}</p>
         )}
 
         <button

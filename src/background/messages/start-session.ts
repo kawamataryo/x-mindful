@@ -12,10 +12,10 @@ export type StartSessionResponse = {
   session?: any;
 };
 
-const handler: PlasmoMessaging.MessageHandler<
-  StartSessionRequest,
-  StartSessionResponse
-> = async (req, res) => {
+const handler: PlasmoMessaging.MessageHandler<StartSessionRequest, StartSessionResponse> = async (
+  req,
+  res,
+) => {
   try {
     const { durationMinutes } = req.body;
 
@@ -23,7 +23,7 @@ const handler: PlasmoMessaging.MessageHandler<
     if (!durationMinutes || durationMinutes <= 0) {
       res.send({
         success: false,
-        error: "セッション時間は正の数である必要があります"
+        error: "セッション時間は正の数である必要があります",
       });
       return;
     }
@@ -33,7 +33,7 @@ const handler: PlasmoMessaging.MessageHandler<
     if (existingSession && existingSession.isActive) {
       res.send({
         success: false,
-        error: "既にアクティブなセッションが存在します"
+        error: "既にアクティブなセッションが存在します",
       });
       return;
     }
@@ -43,7 +43,7 @@ const handler: PlasmoMessaging.MessageHandler<
     if (durationMinutes > remainingMinutes) {
       res.send({
         success: false,
-        error: `本日の残り利用可能時間は${remainingMinutes}分です`
+        error: `本日の残り利用可能時間は${remainingMinutes}分です`,
       });
       return;
     }
@@ -54,13 +54,13 @@ const handler: PlasmoMessaging.MessageHandler<
 
     res.send({
       success: true,
-      session: newSession
+      session: newSession,
     });
   } catch (error) {
     console.error("Error starting session:", error);
     res.send({
       success: false,
-      error: "セッションの開始に失敗しました"
+      error: "セッションの開始に失敗しました",
     });
   }
 };

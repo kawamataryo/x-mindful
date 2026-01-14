@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Ensure native form controls (input, select, etc.) render in light mode by default.
+   This prevents black form controls on some Chrome/OS combinations for extension pages. */
+:root {
+  color-scheme: light;
+}
+
+/* If we ever enable Tailwind's dark mode via `.dark`, let native controls follow it. */
+.dark {
+  color-scheme: dark;
+}

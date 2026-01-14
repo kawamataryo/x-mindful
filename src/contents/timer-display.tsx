@@ -70,7 +70,7 @@ const TimerDisplay = () => {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("popstate", handlePopState);
-    
+
     // body要素の変更を監視（SPAのナビゲーション検知用）
     observer.observe(document.body, {
       childList: true,
@@ -93,28 +93,28 @@ const TimerDisplay = () => {
   const timeText = formatTime(session.remainingSeconds);
 
   return (
-    <div 
+    <div
       className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[999999] flex flex-col items-center gap-2 p-2 rounded-lg"
       style={{
-        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        backgroundColor: "rgba(0, 0, 0, 0.7)",
       }}
     >
       {/* 残り時間テキスト */}
-      <div 
+      <div
         className="text-sm font-semibold text-white text-center px-3 py-1 rounded backdrop-blur-sm"
         style={{
-          backgroundColor: 'rgba(0, 0, 0, 0.7)',
-          textShadow: '0 1px 2px rgba(0, 0, 0, 0.5)',
+          backgroundColor: "rgba(0, 0, 0, 0.7)",
+          textShadow: "0 1px 2px rgba(0, 0, 0, 0.5)",
         }}
       >
         {timeText}
       </div>
 
       {/* 直線プログレスバー */}
-      <div 
+      <div
         className="w-64 h-1.5 rounded-full overflow-hidden backdrop-blur-sm"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.2)',
+          backgroundColor: "rgba(255, 255, 255, 0.2)",
         }}
       >
         <div

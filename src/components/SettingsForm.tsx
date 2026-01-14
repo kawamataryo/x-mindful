@@ -1,7 +1,4 @@
-import type { Settings } from "~lib/types";
-
 interface SettingsFormProps {
-  settings: Settings;
   dailyLimit: string;
   setDailyLimit: (value: string) => void;
   presetInput: string;
@@ -11,11 +8,9 @@ interface SettingsFormProps {
   message: string;
   onAddPreset: () => void;
   onRemovePreset: (value: number) => void;
-  onSave: () => void;
 }
 
 export function SettingsForm({
-  settings,
   dailyLimit,
   setDailyLimit,
   presetInput,
@@ -25,26 +20,32 @@ export function SettingsForm({
   message,
   onAddPreset,
   onRemovePreset,
-  onSave,
 }: SettingsFormProps) {
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="bg-white rounded-lg shadow p-6 mb-6">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-800">利用制限の設定</h2>
+        <p className="text-xs text-gray-500">
+          {saving ? "自動保存中..." : "変更は自動で保存されます"}
+        </p>
+      </div>
+
       {/* 1日の利用時間上限 */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-base font-medium text-gray-600 mb-2">
           1日の総利用時間上限（分）
         </label>
         <input
           type="number"
           value={dailyLimit}
           onChange={(e) => setDailyLimit(e.target.value)}
-          className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full max-w-xs px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
       {/* プリセット時間 */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-base font-medium text-gray-600 mb-2">
           プリセット時間（分）
         </label>
         <div className="flex gap-2 flex-wrap mb-3">
@@ -69,7 +70,7 @@ export function SettingsForm({
             value={presetInput}
             onChange={(e) => setPresetInput(e.target.value)}
             placeholder="例: 15"
-            className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
             onClick={onAddPreset}
@@ -82,23 +83,12 @@ export function SettingsForm({
 
       {/* メッセージ */}
       {message && (
-        <p className={`mb-4 text-sm ${message.includes("失敗") ? "text-red-600" : "text-green-600"}`}>
+        <p
+          className={`mb-4 text-sm ${message.includes("失敗") ? "text-red-600" : "text-green-600"}`}
+        >
           {message}
         </p>
       )}
-
-      {/* 保存ボタン */}
-      <button
-        onClick={onSave}
-        disabled={saving}
-        className={`px-6 py-2.5 text-white rounded-lg font-medium transition-colors ${
-          saving
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
-        }`}
-      >
-        {saving ? "保存中..." : "設定を保存"}
-      </button>
     </div>
   );
 }

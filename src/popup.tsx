@@ -78,7 +78,7 @@ function Popup() {
                     <span className="text-sm text-gray-800">{stats.label}</span>
                   </div>
                   <span className="text-sm font-semibold text-blue-600">
-                    {stats.remainingMinutes}分
+                    {stats.usedMinutes}分 / {stats.dailyLimitMinutes}分
                   </span>
                 </div>
               );

@@ -31,9 +31,7 @@ export function SessionHistoryItem({ session }: SessionHistoryItemProps) {
               </span>
             )}
           </div>
-          <span className="text-xs text-gray-500">
-            {session.siteLabel || session.siteId}
-          </span>
+          <span className="text-xs text-gray-500">{session.siteLabel || session.siteId}</span>
           <span className="text-xs text-gray-500">
             {isToday
               ? "今日"

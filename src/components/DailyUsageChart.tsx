@@ -1,4 +1,11 @@
-import { BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, Tooltip } from "chart.js";
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Tooltip,
+} from "chart.js";
 import { Bar } from "react-chartjs-2";
 import type { DailyUsage, SiteRule } from "~lib/types";
 
@@ -42,7 +49,9 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
 
   const allValues = datasets.flatMap((dataset) => dataset.data as number[]);
   const average =
-    allValues.length > 0 ? Math.round(allValues.reduce((sum, value) => sum + value, 0) / allValues.length) : 0;
+    allValues.length > 0
+      ? Math.round(allValues.reduce((sum, value) => sum + value, 0) / allValues.length)
+      : 0;
 
   const chartData = {
     labels,

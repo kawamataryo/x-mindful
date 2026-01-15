@@ -1,5 +1,12 @@
 import { Storage } from "@plasmohq/storage";
-import type { Settings, Session, DailyUsage, SessionRecord, SiteDailyUsage, SiteRule } from "./types";
+import type {
+  Settings,
+  Session,
+  DailyUsage,
+  SessionRecord,
+  SiteDailyUsage,
+  SiteRule,
+} from "./types";
 import { STORAGE_KEYS, DEFAULT_SETTINGS, getToday } from "./types";
 
 const storage = new Storage();
@@ -9,7 +16,8 @@ function buildDefaultSiteRulesFromLegacy(dailyLimitMinutes?: number): SiteRule[]
   return [
     {
       ...baseRule,
-      dailyLimitMinutes: typeof dailyLimitMinutes === "number" ? dailyLimitMinutes : baseRule.dailyLimitMinutes,
+      dailyLimitMinutes:
+        typeof dailyLimitMinutes === "number" ? dailyLimitMinutes : baseRule.dailyLimitMinutes,
     },
   ];
 }
@@ -30,7 +38,9 @@ function normalizeSettings(raw: any): Settings {
   }
 
   return {
-    presetMinutes: Array.isArray(raw.presetMinutes) ? raw.presetMinutes : DEFAULT_SETTINGS.presetMinutes,
+    presetMinutes: Array.isArray(raw.presetMinutes)
+      ? raw.presetMinutes
+      : DEFAULT_SETTINGS.presetMinutes,
     siteRules: raw.siteRules,
     globalExcludePatterns: Array.isArray(raw.globalExcludePatterns)
       ? raw.globalExcludePatterns

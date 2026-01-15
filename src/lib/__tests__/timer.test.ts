@@ -39,9 +39,7 @@ describe("timer", () => {
     };
 
     expect(decrementSession(session).remainingSeconds).toBe(0);
-    expect(
-      decrementSession({ ...session, remainingSeconds: 0 }).remainingSeconds,
-    ).toBe(0);
+    expect(decrementSession({ ...session, remainingSeconds: 0 }).remainingSeconds).toBe(0);
   });
 
   it("checks session expiration state", () => {

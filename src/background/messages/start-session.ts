@@ -1,5 +1,10 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging";
-import { getCurrentSession, saveCurrentSession, getRemainingMinutes, getSettings } from "~lib/storage";
+import {
+  getCurrentSession,
+  saveCurrentSession,
+  getRemainingMinutes,
+  getSettings,
+} from "~lib/storage";
 import { createSession } from "~lib/timer";
 
 export type StartSessionRequest = {

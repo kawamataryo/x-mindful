@@ -27,8 +27,7 @@ beforeEach(() => {
 
 (globalThis as { chrome?: unknown }).chrome = {
   runtime: {
-    getURL: (path: string) =>
-      `chrome-extension://test/${path.replace(/^\//, "")}`,
+    getURL: (path: string) => `chrome-extension://test/${path.replace(/^\//, "")}`,
   },
   tabs: {
     query: vi.fn(),
@@ -36,5 +35,4 @@ beforeEach(() => {
   },
 };
 
-(globalThis as { __testStorage?: Map<string, unknown> }).__testStorage =
-  storageData;
+(globalThis as { __testStorage?: Map<string, unknown> }).__testStorage = storageData;

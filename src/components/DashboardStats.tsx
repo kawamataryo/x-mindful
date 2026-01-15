@@ -52,7 +52,10 @@ export function DashboardStats({
         <h3 className="text-sm font-medium text-gray-600 mb-1">今日のセッション数</h3>
         <p className="text-2xl font-bold text-purple-600">{sessionCount}回</p>
         <p className="text-xs text-gray-500 mt-1">
-          平均: {sessionCount > 0 ? `${Math.round(usedMinutes / sessionCount)}分/セッション` : "0分/セッション"}
+          平均:{" "}
+          {sessionCount > 0
+            ? `${Math.round(usedMinutes / sessionCount)}分/セッション`
+            : "0分/セッション"}
         </p>
       </div>
     </div>

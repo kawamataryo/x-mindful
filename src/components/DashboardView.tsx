@@ -11,13 +11,8 @@ interface DashboardViewProps {
 }
 
 export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
-  const {
-    dashboardLoading,
-    siteStats,
-    allSessions,
-    dailyUsageHistory,
-    loadDashboardData,
-  } = useDashboard(settings.siteRules);
+  const { dashboardLoading, siteStats, allSessions, dailyUsageHistory, loadDashboardData } =
+    useDashboard(settings.siteRules);
   // 初期ロードとリロード
   useEffect(() => {
     loadDashboardData();
@@ -95,10 +90,7 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
 
       {/* 日別利用時間グラフ */}
       <div className="mt-6">
-        <DailyUsageChart
-          dailyUsageHistory={dailyUsageHistory}
-          siteRules={settings.siteRules}
-        />
+        <DailyUsageChart dailyUsageHistory={dailyUsageHistory} siteRules={settings.siteRules} />
       </div>
 
       {/* セッション履歴 */}

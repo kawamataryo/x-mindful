@@ -39,9 +39,7 @@ export function SessionStartView() {
           <h2 className="text-3xl font-bold text-gray-800 mb-3 text-center">セッション継続中</h2>
           <p className="text-gray-600 text-center mb-2">
             対象サイト:{" "}
-            <strong className="text-blue-600">
-              {activeSiteLabel || activeSession.siteId}
-            </strong>
+            <strong className="text-blue-600">{activeSiteLabel || activeSession.siteId}</strong>
           </p>
           <p className="text-gray-600 text-center mb-6">
             残り時間: <strong className="text-2xl text-blue-600">{remaining}</strong>

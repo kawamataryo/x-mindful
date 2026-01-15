@@ -28,11 +28,9 @@ describe("url-matcher", () => {
   });
 
   it("returns null when excluded by global patterns", () => {
-    const result = matchSiteRule(
-      "https://x.com/messages",
-      rules,
-      ["^https?://(twitter|x)\\.com/messages"],
-    );
+    const result = matchSiteRule("https://x.com/messages", rules, [
+      "^https?://(twitter|x)\\.com/messages",
+    ]);
     expect(result).toBeNull();
   });
 

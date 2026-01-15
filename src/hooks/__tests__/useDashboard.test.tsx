@@ -2,11 +2,7 @@ import { renderHook, act } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { useDashboard } from "../useDashboard";
 import type { DailyUsage, SiteRule } from "~lib/types";
-import {
-  getAllDailyUsage,
-  getDailyUsage,
-  getRemainingMinutes,
-} from "~lib/storage";
+import { getAllDailyUsage, getDailyUsage, getRemainingMinutes } from "~lib/storage";
 
 vi.mock("~lib/storage", () => ({
   getAllDailyUsage: vi.fn(),

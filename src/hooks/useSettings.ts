@@ -183,20 +183,16 @@ export function useSettings() {
     });
   }, []);
 
-  const handleUpdateSiteRule = useCallback(
-    (id: string, patch: Partial<SiteRuleInput>) => {
-      setSiteRulesInput((prev) =>
-        prev.map((rule) => (rule.id === id ? { ...rule, ...patch } : rule)),
-      );
-      setMessage("");
-    },
-    [],
-  );
+  const handleUpdateSiteRule = useCallback((id: string, patch: Partial<SiteRuleInput>) => {
+    setSiteRulesInput((prev) =>
+      prev.map((rule) => (rule.id === id ? { ...rule, ...patch } : rule)),
+    );
+    setMessage("");
+  }, []);
 
   const hasUnsavedChanges =
     hasLoadedRef.current &&
-    serializeInputs(presets, siteRulesInput, globalExcludeInput) !==
-      lastInputSerializedRef.current;
+    serializeInputs(presets, siteRulesInput, globalExcludeInput) !== lastInputSerializedRef.current;
 
   const handleSaveSettings = useCallback(async () => {
     if (!hasLoadedRef.current) return;
@@ -222,11 +218,7 @@ export function useSettings() {
       if (seq !== saveSeqRef.current) return;
 
       lastPersistedRef.current = candidateKey;
-      lastInputSerializedRef.current = serializeInputs(
-        presets,
-        siteRulesInput,
-        globalExcludeInput,
-      );
+      lastInputSerializedRef.current = serializeInputs(presets, siteRulesInput, globalExcludeInput);
       setSettings(candidate);
       setMessage("保存しました");
     } catch (error) {

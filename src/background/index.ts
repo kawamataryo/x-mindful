@@ -1,5 +1,10 @@
 import { Storage } from "@plasmohq/storage";
-import { getCurrentSession, saveCurrentSession, initializeStorage, getSettings } from "~lib/storage";
+import {
+  getCurrentSession,
+  saveCurrentSession,
+  initializeStorage,
+  getSettings,
+} from "~lib/storage";
 import { decrementSession, isSessionExpired, isSessionToday } from "~lib/timer";
 import { matchSiteRule } from "~lib/url-matcher";
 import { getToday } from "~lib/types";
@@ -326,11 +331,7 @@ chrome.tabs.onCreated.addListener(async (tab) => {
   if (tab.id && tab.url) {
     console.log("[Site Blocker] Tab created:", tab.url);
     const settings = await getSettings();
-    const matchedRule = matchSiteRule(
-      tab.url,
-      settings.siteRules,
-      settings.globalExcludePatterns,
-    );
+    const matchedRule = matchSiteRule(tab.url, settings.siteRules, settings.globalExcludePatterns);
 
     if (matchedRule) {
       const session = await getCurrentSession();

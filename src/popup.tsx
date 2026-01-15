@@ -72,9 +72,7 @@ function Popup() {
                       {faviconUrl ? (
                         <img src={faviconUrl} alt="" className="w-4 h-4" />
                       ) : (
-                        <span className="text-[10px] text-gray-500">
-                          {stats.label.slice(0, 1)}
-                        </span>
+                        <span className="text-[10px] text-gray-500">{stats.label.slice(0, 1)}</span>
                       )}
                     </div>
                     <span className="text-sm text-gray-800">{stats.label}</span>

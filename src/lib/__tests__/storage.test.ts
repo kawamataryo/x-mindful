@@ -3,10 +3,7 @@ import { getDailyUsage, getRemainingMinutes, getSettings } from "../storage";
 import { DEFAULT_SETTINGS, STORAGE_KEYS } from "../types";
 
 const getStorageMap = () =>
-  (globalThis as { __testStorage?: Map<string, unknown> }).__testStorage as Map<
-    string,
-    unknown
-  >;
+  (globalThis as { __testStorage?: Map<string, unknown> }).__testStorage as Map<string, unknown>;
 
 describe("storage", () => {
   afterEach(() => {
@@ -32,9 +29,7 @@ describe("storage", () => {
 
     expect(settings.siteRules[0]?.dailyLimitMinutes).toBe(15);
     expect(settings.presetMinutes).toEqual([2, 4]);
-    expect(settings.globalExcludePatterns).toEqual(
-      DEFAULT_SETTINGS.globalExcludePatterns,
-    );
+    expect(settings.globalExcludePatterns).toEqual(DEFAULT_SETTINGS.globalExcludePatterns);
   });
 
   it("normalizes legacy daily usage into siteUsage", async () => {

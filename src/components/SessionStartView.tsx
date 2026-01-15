@@ -14,13 +14,13 @@ export function SessionStartView() {
     siteRules,
     targetSiteId,
     targetSiteRule,
+    returnUrl,
     loadSessionStartData,
     handlePresetClick,
     handleCustomChange,
     handleStartSession,
     handleResumeSession,
     handleEndSession,
-    handleSiteChange,
   } = useSessionStart();
 
   const activeSiteLabel =
@@ -72,6 +72,17 @@ export function SessionStartView() {
     );
   }
 
+  const faviconUrl = (() => {
+    const fallbackUrl = targetSiteRule?.siteUrl || returnUrl;
+    if (!fallbackUrl) return null;
+    try {
+      const host = new URL(fallbackUrl).hostname;
+      return `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
+    } catch {
+      return null;
+    }
+  })();
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
@@ -79,26 +90,18 @@ export function SessionStartView() {
 
         <div className="mb-6">
           <label className="block mb-2 font-medium text-gray-700">対象サイト</label>
-          {siteRules.length > 1 ? (
-            <select
-              value={targetSiteId || ""}
-              onChange={(e) => handleSiteChange(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            >
-              <option value="" disabled>
-                サイトを選択してください
-              </option>
-              {siteRules.map((rule) => (
-                <option key={rule.id} value={rule.id}>
-                  {rule.label}
-                </option>
-              ))}
-            </select>
-          ) : (
-            <div className="px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-700 bg-gray-50">
-              {targetSiteRule?.label || "対象サイトが未設定です"}
+          <div className="px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-700 bg-gray-50 flex items-center gap-3">
+            <div className="w-6 h-6 bg-gray-200 rounded overflow-hidden flex items-center justify-center">
+              {faviconUrl ? (
+                <img src={faviconUrl} alt="" className="w-6 h-6" />
+              ) : (
+                <span className="text-xs text-gray-500">
+                  {(targetSiteRule?.label || targetSiteId || "?").slice(0, 1)}
+                </span>
+              )}
             </div>
-          )}
+            <span>{targetSiteRule?.label || targetSiteId || "対象サイトが未設定です"}</span>
+          </div>
         </div>
 
         <p className="text-gray-600 text-center mb-6">

@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from "react";
 import { Storage } from "@plasmohq/storage";
 import { sendToBackground } from "@plasmohq/messaging";
 import { getRemainingMinutes, getSettings } from "~lib/storage";
+import { matchSiteRule } from "~lib/url-matcher";
 import type { Session, SiteRule } from "~lib/types";
 
 const storage = new Storage();
@@ -47,7 +48,16 @@ export function useSessionStart() {
       const returnUrlParam = params.get("returnUrl");
       setReturnUrl(returnUrlParam);
 
-      const initialSiteId = siteIdParam || currentSettings.siteRules[0]?.id || null;
+      const inferredRule = returnUrlParam
+        ? matchSiteRule(
+            returnUrlParam,
+            currentSettings.siteRules,
+            currentSettings.globalExcludePatterns,
+          )
+        : null;
+
+      const initialSiteId =
+        inferredRule?.id || siteIdParam || currentSettings.siteRules[0]?.id || null;
       setTargetSiteId(initialSiteId);
 
       if (initialSiteId) {
@@ -173,15 +183,6 @@ export function useSessionStart() {
     }
   }, [activeSession, getRedirectUrl]);
 
-  const handleSiteChange = useCallback(async (siteId: string) => {
-    setTargetSiteId(siteId);
-    setSelectedMinutes(null);
-    setCustomMinutes("");
-    setStartError("");
-    const remaining = await getRemainingMinutes(siteId);
-    setRemainingMinutes(remaining);
-  }, []);
-
   // セッション終了
   const handleEndSession = useCallback(async () => {
     setStartLoading(true);
@@ -224,6 +225,5 @@ export function useSessionStart() {
     handleStartSession,
     handleResumeSession,
     handleEndSession,
-    handleSiteChange,
   };
 }

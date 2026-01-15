@@ -1,6 +1,6 @@
 {
   "name": "x-blocker",
-  "displayName": "Site Blocker",
+  "displayName": "Mindful Sites",
   "version": "0.0.1",
   "description": "対象サイトの利用制限Chrome拡張機能",
   "author": "ryokawamata",

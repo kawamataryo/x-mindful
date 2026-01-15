@@ -7,7 +7,7 @@ import {
 } from "~lib/storage";
 import { decrementSession, isSessionExpired, isSessionToday } from "~lib/timer";
 import { matchSiteRule } from "~lib/url-matcher";
-import { getToday } from "~lib/types";
+import { getToday, isSession } from "~lib/types";
 
 // タイマーインターバルID
 let timerInterval: NodeJS.Timeout | null = null;
@@ -120,14 +120,12 @@ function buildStartSessionUrl(siteId: string, returnUrl?: string): string {
   return chrome.runtime.getURL(`options.html?${params.toString()}`);
 }
 
+type TabUpdateHandler = Parameters<typeof chrome.tabs.onUpdated.addListener>[0];
+
 /**
  * タブのURLが変更されたときの処理
  */
-async function handleTabUpdate(
-  tabId: number,
-  changeInfo: chrome.tabs.TabChangeInfo,
-  tab: chrome.tabs.Tab,
-) {
+const handleTabUpdate: TabUpdateHandler = async (tabId, changeInfo, tab) => {
   // URLが変更されたか、ページ読み込みが完了した時にチェック
   if (changeInfo.url || changeInfo.status === "complete") {
     const currentUrl = changeInfo.url || tab.url;
@@ -169,7 +167,7 @@ async function handleTabUpdate(
       startTimer();
     }
   }
-}
+};
 
 /**
  * ブラウザ起動時の状態復元
@@ -349,7 +347,7 @@ chrome.tabs.onCreated.addListener(async (tab) => {
 // ストレージの変更を監視してタイマーを開始/停止
 storage.watch({
   currentSession: (change) => {
-    const session = change.newValue;
+    const session = isSession(change.newValue) ? change.newValue : null;
 
     if (session && session.isActive && session.remainingSeconds > 0) {
       startTimer();

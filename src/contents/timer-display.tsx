@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Storage } from "@plasmohq/storage";
 import { formatTime } from "~lib/timer";
 import { getSettings } from "~lib/storage";
+import { isSession } from "~lib/types";
 import type { Session } from "~lib/types";
 import { matchSiteRule } from "~lib/url-matcher";
 
@@ -47,7 +48,7 @@ const TimerDisplay = () => {
     // ストレージの変更を監視
     storage.watch({
       currentSession: (change) => {
-        setSession(change.newValue);
+        setSession(isSession(change.newValue) ? change.newValue : null);
       },
     });
 

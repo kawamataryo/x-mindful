@@ -14,7 +14,8 @@
     "fix": "pnpm format && pnpm lint:fix",
     "test": "vitest",
     "test:watch": "vitest --watch",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@plasmohq/messaging": "^0.7.2",

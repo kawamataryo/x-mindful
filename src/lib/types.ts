@@ -24,6 +24,23 @@ export interface Session {
   siteUrl?: string; // セッション開始時のURL
 }
 
+export function isSession(value: unknown): value is Session {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const session = value as Session;
+
+  return (
+    typeof session.id === "string" &&
+    typeof session.startTime === "number" &&
+    typeof session.durationMinutes === "number" &&
+    typeof session.remainingSeconds === "number" &&
+    typeof session.isActive === "boolean" &&
+    typeof session.siteId === "string"
+  );
+}
+
 // 日次データ
 export interface DailyUsage {
   date: string; // YYYY-MM-DD

@@ -45,6 +45,8 @@ const handler: PlasmoMessaging.MessageHandler<
       endTime: Date.now(),
       durationMinutes: getElapsedMinutes(currentSession),
       reflection: reflection.trim(),
+      siteId: currentSession.siteId,
+      siteUrl: currentSession.siteUrl,
     };
 
     // 記録を保存

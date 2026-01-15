@@ -1,9 +1,11 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging";
-import { getCurrentSession, saveCurrentSession, getRemainingMinutes } from "~lib/storage";
+import { getCurrentSession, saveCurrentSession, getRemainingMinutes, getSettings } from "~lib/storage";
 import { createSession } from "~lib/timer";
 
 export type StartSessionRequest = {
   durationMinutes: number;
+  siteId: string;
+  siteUrl?: string;
 };
 
 export type StartSessionResponse = {
@@ -17,13 +19,31 @@ const handler: PlasmoMessaging.MessageHandler<StartSessionRequest, StartSessionR
   res,
 ) => {
   try {
-    const { durationMinutes } = req.body;
+    const { durationMinutes, siteId, siteUrl } = req.body;
 
     // バリデーション: 時間が正の数であること
     if (!durationMinutes || durationMinutes <= 0) {
       res.send({
         success: false,
         error: "セッション時間は正の数である必要があります",
+      });
+      return;
+    }
+
+    if (!siteId) {
+      res.send({
+        success: false,
+        error: "対象サイトが選択されていません",
+      });
+      return;
+    }
+
+    const settings = await getSettings();
+    const targetRule = settings.siteRules.find((rule) => rule.id === siteId);
+    if (!targetRule) {
+      res.send({
+        success: false,
+        error: "対象サイトの設定が見つかりません",
       });
       return;
     }
@@ -39,7 +59,7 @@ const handler: PlasmoMessaging.MessageHandler<StartSessionRequest, StartSessionR
     }
 
     // 残り利用可能時間をチェック
-    const remainingMinutes = await getRemainingMinutes();
+    const remainingMinutes = await getRemainingMinutes(siteId);
     if (durationMinutes > remainingMinutes) {
       res.send({
         success: false,
@@ -49,7 +69,7 @@ const handler: PlasmoMessaging.MessageHandler<StartSessionRequest, StartSessionR
     }
 
     // 新しいセッションを作成
-    const newSession = createSession(durationMinutes);
+    const newSession = createSession(durationMinutes, siteId, siteUrl);
     await saveCurrentSession(newSession);
 
     res.send({

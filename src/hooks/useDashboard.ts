@@ -1,15 +1,25 @@
 import { useState } from "react";
-import type { DailyUsage, SessionRecord } from "~lib/types";
+import type { DailyUsage, SessionRecord, SiteRule } from "~lib/types";
 import { getAllDailyUsage, getDailyUsage, getRemainingMinutes } from "~lib/storage";
 
 // セッション記録に日付情報を追加した型
 export interface SessionRecordWithDate extends SessionRecord {
   date: string;
+  siteLabel?: string;
 }
 
-export function useDashboard() {
-  const [todayUsage, setTodayUsage] = useState<DailyUsage | null>(null);
-  const [dashboardRemainingMinutes, setDashboardRemainingMinutes] = useState(0);
+export interface SiteStats {
+  siteId: string;
+  label: string;
+  dailyLimitMinutes: number;
+  remainingMinutes: number;
+  usedMinutes: number;
+  sessionCount: number;
+  siteUrl?: string;
+}
+
+export function useDashboard(siteRules: SiteRule[]) {
+  const [siteStats, setSiteStats] = useState<SiteStats[]>([]);
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [allSessions, setAllSessions] = useState<SessionRecordWithDate[]>([]);
   const [dailyUsageHistory, setDailyUsageHistory] = useState<DailyUsage[]>([]);
@@ -21,10 +31,14 @@ export function useDashboard() {
       const sessionsWithDate: SessionRecordWithDate[] = [];
 
       allDailyUsage.forEach((dailyUsage) => {
-        dailyUsage.sessions.forEach((session) => {
-          sessionsWithDate.push({
-            ...session,
-            date: dailyUsage.date,
+        Object.values(dailyUsage.siteUsage).forEach((siteUsage) => {
+          siteUsage.sessions.forEach((session) => {
+            const siteLabel = siteRules.find((rule) => rule.id === session.siteId)?.label;
+            sessionsWithDate.push({
+              ...session,
+              date: dailyUsage.date,
+              siteLabel,
+            });
           });
         });
       });
@@ -55,10 +69,23 @@ export function useDashboard() {
     setDashboardLoading(true);
     try {
       const todayData = await getDailyUsage();
-      const remaining = await getRemainingMinutes();
+      const nextStats: SiteStats[] = [];
 
-      setTodayUsage(todayData);
-      setDashboardRemainingMinutes(remaining);
+      for (const rule of siteRules) {
+        const siteUsage = todayData.siteUsage[rule.id];
+        const remaining = await getRemainingMinutes(rule.id);
+        nextStats.push({
+          siteId: rule.id,
+          label: rule.label,
+          dailyLimitMinutes: rule.dailyLimitMinutes,
+          remainingMinutes: remaining,
+          usedMinutes: siteUsage?.totalUsedMinutes || 0,
+          sessionCount: siteUsage?.sessions.length || 0,
+          siteUrl: rule.siteUrl,
+        });
+      }
+
+      setSiteStats(nextStats);
 
       if (!skipSessions) {
         await loadAllSessions();
@@ -72,8 +99,7 @@ export function useDashboard() {
   };
 
   return {
-    todayUsage,
-    dashboardRemainingMinutes,
+    siteStats,
     dashboardLoading,
     allSessions,
     dailyUsageHistory,

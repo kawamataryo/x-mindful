@@ -11,13 +11,20 @@ export function SessionStartView() {
     startError,
     presets,
     activeSession,
+    siteRules,
+    targetSiteId,
+    targetSiteRule,
     loadSessionStartData,
     handlePresetClick,
     handleCustomChange,
     handleStartSession,
     handleResumeSession,
     handleEndSession,
+    handleSiteChange,
   } = useSessionStart();
+
+  const activeSiteLabel =
+    activeSession && siteRules.find((rule) => rule.id === activeSession.siteId)?.label;
 
   useEffect(() => {
     loadSessionStartData();
@@ -30,6 +37,12 @@ export function SessionStartView() {
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
           <h2 className="text-3xl font-bold text-gray-800 mb-3 text-center">セッション継続中</h2>
+          <p className="text-gray-600 text-center mb-2">
+            対象サイト:{" "}
+            <strong className="text-blue-600">
+              {activeSiteLabel || activeSession.siteId}
+            </strong>
+          </p>
           <p className="text-gray-600 text-center mb-6">
             残り時間: <strong className="text-2xl text-blue-600">{remaining}</strong>
           </p>
@@ -44,7 +57,7 @@ export function SessionStartView() {
               disabled={startLoading}
               className="w-full px-4 py-4 text-white border-none rounded-xl text-lg font-bold transition-all bg-blue-500 hover:bg-blue-600 cursor-pointer shadow-lg hover:shadow-xl disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
-              Xへ戻る
+              対象サイトへ戻る
             </button>
             <button
               onClick={handleEndSession}
@@ -62,7 +75,31 @@ export function SessionStartView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl">
-        <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">X利用セッション開始</h2>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center">利用セッション開始</h2>
+
+        <div className="mb-6">
+          <label className="block mb-2 font-medium text-gray-700">対象サイト</label>
+          {siteRules.length > 1 ? (
+            <select
+              value={targetSiteId || ""}
+              onChange={(e) => handleSiteChange(e.target.value)}
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="" disabled>
+                サイトを選択してください
+              </option>
+              {siteRules.map((rule) => (
+                <option key={rule.id} value={rule.id}>
+                  {rule.label}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <div className="px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-700 bg-gray-50">
+              {targetSiteRule?.label || "対象サイトが未設定です"}
+            </div>
+          )}
+        </div>
 
         <p className="text-gray-600 text-center mb-6">
           本日の残り利用可能時間:{" "}

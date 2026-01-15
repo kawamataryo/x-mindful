@@ -1,7 +1,16 @@
 // 設定データ
-export interface Settings {
+export interface SiteRule {
+  id: string; // サイトID
+  label: string; // 表示名
+  includePatterns: string[]; // 対象URLの正規表現（文字列）
   dailyLimitMinutes: number; // 1日の総利用時間上限（分）
+  siteUrl?: string; // 代表URL（リダイレクトやfavicon取得用）
+}
+
+export interface Settings {
   presetMinutes: number[]; // プリセット時間（例: [1, 5, 10, 20]）
+  siteRules: SiteRule[]; // サイトルール
+  globalExcludePatterns: string[]; // 除外URLの正規表現（文字列）
 }
 
 // セッションデータ
@@ -11,13 +20,14 @@ export interface Session {
   durationMinutes: number; // セッション時間（分）
   remainingSeconds: number; // 残り時間（秒）
   isActive: boolean; // アクティブ状態
+  siteId: string; // 対象サイトID
+  siteUrl?: string; // セッション開始時のURL
 }
 
 // 日次データ
 export interface DailyUsage {
   date: string; // YYYY-MM-DD
-  totalUsedMinutes: number; // 使用済み時間（分）
-  sessions: SessionRecord[]; // セッション記録
+  siteUsage: Record<string, SiteDailyUsage>; // サイト別の利用状況
 }
 
 // セッション記録
@@ -27,6 +37,14 @@ export interface SessionRecord {
   endTime: number;
   durationMinutes: number;
   reflection: string; // 振り返り内容
+  siteId: string; // 対象サイトID
+  siteUrl?: string; // セッション開始時のURL
+}
+
+export interface SiteDailyUsage {
+  siteId: string;
+  totalUsedMinutes: number; // 使用済み時間（分）
+  sessions: SessionRecord[]; // セッション記録
 }
 
 // Storageキー
@@ -38,8 +56,21 @@ export const STORAGE_KEYS = {
 
 // デフォルト設定
 export const DEFAULT_SETTINGS: Settings = {
-  dailyLimitMinutes: 30, // デフォルト: 30分/日
   presetMinutes: [1, 5, 10, 20], // デフォルトプリセット
+  siteRules: [
+    {
+      id: "x",
+      label: "X",
+      includePatterns: ["^https?://(twitter|x)\\.com(/|$)"],
+      dailyLimitMinutes: 30, // デフォルト: 30分/日
+      siteUrl: "https://x.com/home",
+    },
+  ],
+  globalExcludePatterns: [
+    "^https?://(twitter|x)\\.com/compose",
+    "^https?://(twitter|x)\\.com/messages/compose",
+    "^https?://(twitter|x)\\.com/messages",
+  ],
 };
 
 // 日付フォーマット関数（ローカルTZベース）

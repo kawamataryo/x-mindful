@@ -1,40 +1,59 @@
-// 制限対象のページパターン（X/Twitter全体）
-// - ここを狭くすると、X内の遷移やログインフロー等で「対象外」になりやすく、
-//   制御が不安定になるため、X/Twitter配下は基本すべて対象にする。
-const RESTRICTED_PATTERNS = [/^https?:\/\/(twitter|x)\.com(\/|$)/];
+import type { SiteRule } from "./types";
 
-// 除外対象のページパターン（タイマーが停止するページ）
-const EXCLUDED_PATTERNS = [
-  /^https?:\/\/(twitter|x)\.com\/compose/, // 投稿画面
-  /^https?:\/\/(twitter|x)\.com\/messages\/compose/, // DM画面
-  /^https?:\/\/(twitter|x)\.com\/messages/, // DM画面全般
-];
+const patternCache = new Map<string, RegExp | null>();
 
-/**
- * URLが制限対象ページかどうかを判定
- */
-export function isRestrictedPage(url: string): boolean {
-  return RESTRICTED_PATTERNS.some((pattern) => pattern.test(url));
+export function compilePattern(pattern: string): RegExp | null {
+  if (patternCache.has(pattern)) {
+    return patternCache.get(pattern) || null;
+  }
+
+  try {
+    if (pattern.startsWith("/")) {
+      const lastSlash = pattern.lastIndexOf("/");
+      if (lastSlash > 1) {
+        const body = pattern.slice(1, lastSlash);
+        const flags = pattern.slice(lastSlash + 1);
+        const regex = new RegExp(body, flags);
+        patternCache.set(pattern, regex);
+        return regex;
+      }
+    }
+
+    const regex = new RegExp(pattern);
+    patternCache.set(pattern, regex);
+    return regex;
+  } catch {
+    patternCache.set(pattern, null);
+    return null;
+  }
 }
 
-/**
- * URLが除外対象ページかどうかを判定
- */
-export function isExcludedPage(url: string): boolean {
-  return EXCLUDED_PATTERNS.some((pattern) => pattern.test(url));
+export function findInvalidPatterns(patterns: string[]): string[] {
+  return patterns.filter((pattern) => !compilePattern(pattern));
 }
 
-/**
- * URLがX/Twitterのページかどうかを判定
- */
-export function isXPage(url: string): boolean {
-  return /^https?:\/\/(twitter|x)\.com/.test(url);
+export function matchSiteRule(
+  url: string,
+  siteRules: SiteRule[],
+  globalExcludePatterns: string[],
+): SiteRule | null {
+  if (globalExcludePatterns.some((pattern) => compilePattern(pattern)?.test(url))) {
+    return null;
+  }
+
+  for (const rule of siteRules) {
+    if (rule.includePatterns.some((pattern) => compilePattern(pattern)?.test(url))) {
+      return rule;
+    }
+  }
+
+  return null;
 }
 
-/**
- * URLがタイマー対象ページかどうかを判定
- * 制限対象ページかつ除外対象ページでない場合にtrue
- */
-export function isTimerTargetPage(url: string): boolean {
-  return isRestrictedPage(url) && !isExcludedPage(url);
+export function isTimerTargetPage(
+  url: string,
+  siteRules: SiteRule[],
+  globalExcludePatterns: string[],
+): boolean {
+  return !!matchSiteRule(url, siteRules, globalExcludePatterns);
 }

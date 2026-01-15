@@ -61,9 +61,9 @@ function OptionsPage() {
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">X Blocker 設定</h1>
+              <h1 className="text-3xl font-bold text-gray-800">サイト利用制限 設定</h1>
               <p className="text-gray-600 mt-2">
-                X（旧Twitter）の利用を制限し、意図的な情報収集をサポートします
+                対象サイトの利用を制限し、意図的な行動をサポートします
               </p>
             </div>
             <button

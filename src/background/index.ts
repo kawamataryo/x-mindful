@@ -1,7 +1,7 @@
 import { Storage } from "@plasmohq/storage";
-import { getCurrentSession, saveCurrentSession, initializeStorage } from "~lib/storage";
+import { getCurrentSession, saveCurrentSession, initializeStorage, getSettings } from "~lib/storage";
 import { decrementSession, isSessionExpired, isSessionToday } from "~lib/timer";
-import { isTimerTargetPage } from "~lib/url-matcher";
+import { matchSiteRule } from "~lib/url-matcher";
 import { getToday } from "~lib/types";
 
 // タイマーインターバルID
@@ -58,8 +58,8 @@ function startTimer() {
         await saveCurrentSession(finalSession);
         stopTimer();
 
-        // すべてのX.comタブを振り返り画面に遷移
-        await redirectXTabsToReflection();
+        // 対象サイトのタブを振り返り画面に遷移
+        await redirectTabsToReflection(updatedSession.siteId);
       } else {
         await saveCurrentSession(updatedSession);
       }
@@ -80,21 +80,39 @@ function stopTimer() {
 }
 
 /**
- * すべてのX.comタブを振り返り画面にリダイレクト
+ * 対象サイトのタブを振り返り画面にリダイレクト
  */
-async function redirectXTabsToReflection() {
+async function redirectTabsToReflection(siteId: string) {
   try {
     const tabs = await chrome.tabs.query({});
     const reflectionUrl = chrome.runtime.getURL("options.html?view=reflection");
+    const settings = await getSettings();
 
     for (const tab of tabs) {
-      if (tab.id && tab.url && isTimerTargetPage(tab.url)) {
-        await chrome.tabs.update(tab.id, { url: reflectionUrl });
+      if (tab.id && tab.url) {
+        const matchedRule = matchSiteRule(
+          tab.url,
+          settings.siteRules,
+          settings.globalExcludePatterns,
+        );
+        if (matchedRule?.id === siteId) {
+          await chrome.tabs.update(tab.id, { url: reflectionUrl });
+        }
       }
     }
   } catch (error) {
     console.error("Error redirecting tabs:", error);
   }
+}
+
+function buildStartSessionUrl(siteId: string, returnUrl?: string): string {
+  const params = new URLSearchParams();
+  params.set("view", "start-session");
+  params.set("siteId", siteId);
+  if (returnUrl) {
+    params.set("returnUrl", returnUrl);
+  }
+  return chrome.runtime.getURL(`options.html?${params.toString()}`);
 }
 
 /**
@@ -113,27 +131,36 @@ async function handleTabUpdate(
       return;
     }
 
-    console.log("[X Blocker] Tab update detected:", currentUrl);
+    console.log("[Site Blocker] Tab update detected:", currentUrl);
+    const settings = await getSettings();
+    const matchedRule = matchSiteRule(
+      currentUrl,
+      settings.siteRules,
+      settings.globalExcludePatterns,
+    );
+    console.log("[Site Blocker] Matched rule:", matchedRule?.id || "none");
 
-    const isTarget = isTimerTargetPage(currentUrl);
-    console.log("[X Blocker] Is target page:", isTarget);
-
-    // X.comへのアクセスを検出
-    if (isTarget) {
+    // 対象サイトへのアクセスを検出
+    if (matchedRule) {
       const session = await getCurrentSession();
-      console.log("[X Blocker] Current session:", session);
+      console.log("[Site Blocker] Current session:", session);
 
       // アクティブなセッションがない場合、タブをoptionsページのセッション開始画面に遷移
-      if (!session || !session.isActive || session.remainingSeconds <= 0) {
-        console.log("[X Blocker] No active session, redirecting to start-session");
+      if (
+        !session ||
+        !session.isActive ||
+        session.remainingSeconds <= 0 ||
+        session.siteId !== matchedRule.id
+      ) {
+        console.log("[Site Blocker] No active session, redirecting to start-session");
         await chrome.tabs.update(tabId, {
-          url: chrome.runtime.getURL("options.html?view=start-session"),
+          url: buildStartSessionUrl(matchedRule.id, currentUrl),
         });
         return;
       }
 
       // アクティブなセッションがある場合はタイマーを開始
-      console.log("[X Blocker] Active session found, starting timer");
+      console.log("[Site Blocker] Active session found, starting timer");
       startTimer();
     }
   }
@@ -182,7 +209,7 @@ async function restoreState() {
  * 日本時間の0:00でリセット処理を実行
  */
 async function resetAtMidnightLocal() {
-  console.log("[X Blocker] Resetting at midnight (local TZ)");
+  console.log("[Site Blocker] Resetting at midnight (local TZ)");
 
   // セッションをリセット
   const session = await getCurrentSession();
@@ -190,13 +217,22 @@ async function resetAtMidnightLocal() {
     await saveCurrentSession(null);
     stopTimer();
 
-    // すべてのX.comタブをセッション開始画面にリダイレクト
+    // 対象サイトのタブをセッション開始画面にリダイレクト
     const tabs = await chrome.tabs.query({});
-    const startUrl = chrome.runtime.getURL("options.html?view=start-session");
+    const settings = await getSettings();
 
     for (const tab of tabs) {
-      if (tab.id && tab.url && isTimerTargetPage(tab.url)) {
-        await chrome.tabs.update(tab.id, { url: startUrl });
+      if (tab.id && tab.url) {
+        const matchedRule = matchSiteRule(
+          tab.url,
+          settings.siteRules,
+          settings.globalExcludePatterns,
+        );
+        if (matchedRule) {
+          await chrome.tabs.update(tab.id, {
+            url: buildStartSessionUrl(matchedRule.id, tab.url),
+          });
+        }
       }
     }
   }
@@ -212,7 +248,9 @@ let midnightResetTimeout: NodeJS.Timeout | null = null;
 
 function scheduleMidnightReset() {
   const msUntilMidnight = getMillisecondsUntilMidnightLocal();
-  console.log(`[X Blocker] Scheduling reset in ${Math.floor(msUntilMidnight / 1000 / 60)} minutes`);
+  console.log(
+    `[Site Blocker] Scheduling reset in ${Math.floor(msUntilMidnight / 1000 / 60)} minutes`,
+  );
 
   if (midnightResetTimeout) {
     clearTimeout(midnightResetTimeout);
@@ -234,7 +272,7 @@ setInterval(async () => {
 
   if (currentDate !== lastCheckDate) {
     lastCheckDate = currentDate;
-    console.log("[X Blocker] Date changed (fallback check)");
+    console.log("[Site Blocker] Date changed (fallback check)");
 
     // 日付が変わったらセッションをリセット
     const session = await getCurrentSession();
@@ -242,13 +280,22 @@ setInterval(async () => {
       await saveCurrentSession(null);
       stopTimer();
 
-      // すべてのX.comタブをセッション開始画面にリダイレクト
+      // 対象サイトのタブをセッション開始画面にリダイレクト
       const tabs = await chrome.tabs.query({});
-      const startUrl = chrome.runtime.getURL("options.html?view=start-session");
+      const settings = await getSettings();
 
       for (const tab of tabs) {
-        if (tab.id && tab.url && isTimerTargetPage(tab.url)) {
-          await chrome.tabs.update(tab.id, { url: startUrl });
+        if (tab.id && tab.url) {
+          const matchedRule = matchSiteRule(
+            tab.url,
+            settings.siteRules,
+            settings.globalExcludePatterns,
+          );
+          if (matchedRule) {
+            await chrome.tabs.update(tab.id, {
+              url: buildStartSessionUrl(matchedRule.id, tab.url),
+            });
+          }
         }
       }
     }
@@ -277,16 +324,21 @@ chrome.tabs.onUpdated.addListener(handleTabUpdate);
 // タブが作成された時もチェック
 chrome.tabs.onCreated.addListener(async (tab) => {
   if (tab.id && tab.url) {
-    console.log("[X Blocker] Tab created:", tab.url);
-    const isTarget = isTimerTargetPage(tab.url);
+    console.log("[Site Blocker] Tab created:", tab.url);
+    const settings = await getSettings();
+    const matchedRule = matchSiteRule(
+      tab.url,
+      settings.siteRules,
+      settings.globalExcludePatterns,
+    );
 
-    if (isTarget) {
+    if (matchedRule) {
       const session = await getCurrentSession();
 
       if (!session || !session.isActive || session.remainingSeconds <= 0) {
-        console.log("[X Blocker] Redirecting new tab to start-session");
+        console.log("[Site Blocker] Redirecting new tab to start-session");
         await chrome.tabs.update(tab.id, {
-          url: chrome.runtime.getURL("options.html?view=start-session"),
+          url: buildStartSessionUrl(matchedRule.id, tab.url),
         });
       }
     }
@@ -306,4 +358,4 @@ storage.watch({
   },
 });
 
-console.log("X Blocker background script loaded");
+console.log("Site Blocker background script loaded");

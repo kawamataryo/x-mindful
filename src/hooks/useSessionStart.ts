@@ -1,9 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Storage } from "@plasmohq/storage";
 import { sendToBackground } from "@plasmohq/messaging";
-import { getSettings } from "~lib/storage";
-import { getToday } from "~lib/types";
-import type { Session } from "~lib/types";
+import { getRemainingMinutes, getSettings } from "~lib/storage";
+import type { Session, SiteRule } from "~lib/types";
 
 const storage = new Storage();
 
@@ -15,25 +14,48 @@ export function useSessionStart() {
   const [startError, setStartError] = useState("");
   const [presets, setPresets] = useState<number[]>([1, 5, 10, 20]);
   const [activeSession, setActiveSession] = useState<Session | null>(null);
+  const [siteRules, setSiteRules] = useState<SiteRule[]>([]);
+  const [targetSiteId, setTargetSiteId] = useState<string | null>(null);
+  const [returnUrl, setReturnUrl] = useState<string | null>(null);
+
+  const targetSiteRule = useMemo(
+    () => siteRules.find((rule) => rule.id === targetSiteId) || null,
+    [siteRules, targetSiteId],
+  );
+
+  const getRedirectUrl = useCallback(
+    (sessionSiteId?: string, sessionSiteUrl?: string | null) => {
+      if (sessionSiteUrl) return sessionSiteUrl;
+      const rule = siteRules.find((item) => item.id === sessionSiteId);
+      return rule?.siteUrl || null;
+    },
+    [siteRules],
+  );
 
   // セッション開始画面用データをロード
   const loadSessionStartData = useCallback(async () => {
     try {
       const currentSettings = await getSettings();
       setPresets(currentSettings.presetMinutes);
+      setSiteRules(currentSettings.siteRules);
 
       const currentSession = await storage.get<Session>("currentSession");
       setActiveSession(currentSession && currentSession.isActive ? currentSession : null);
 
-      const dailyUsage = (await storage.get("dailyUsage")) || {};
-      const today = getToday();
-      const todayUsage = dailyUsage[today] || { totalUsedMinutes: 0 };
+      const params = new URLSearchParams(window.location.search);
+      const siteIdParam = params.get("siteId");
+      const returnUrlParam = params.get("returnUrl");
+      setReturnUrl(returnUrlParam);
 
-      const remaining = Math.max(
-        0,
-        currentSettings.dailyLimitMinutes - todayUsage.totalUsedMinutes,
-      );
-      setRemainingMinutes(remaining);
+      const initialSiteId = siteIdParam || currentSettings.siteRules[0]?.id || null;
+      setTargetSiteId(initialSiteId);
+
+      if (initialSiteId) {
+        const remaining = await getRemainingMinutes(initialSiteId);
+        setRemainingMinutes(remaining);
+      } else {
+        setRemainingMinutes(0);
+      }
     } catch (error) {
       console.error("Error loading session start data:", error);
       setStartError("データの読み込みに失敗しました");
@@ -45,6 +67,11 @@ export function useSessionStart() {
     // 残り時間チェック
     if (minutes > remainingMinutes) {
       setStartError(`本日の残り利用可能時間は${remainingMinutes}分です`);
+      return;
+    }
+
+    if (!targetSiteId) {
+      setStartError("対象サイトを選択してください");
       return;
     }
 
@@ -82,7 +109,10 @@ export function useSessionStart() {
       // 既にアクティブなセッションがある場合は再開扱いにする
       const currentSession = await storage.get<Session>("currentSession");
       if (currentSession && currentSession.isActive && currentSession.remainingSeconds > 0) {
-        window.location.replace("https://x.com/home");
+        const redirectUrl = getRedirectUrl(currentSession.siteId, currentSession.siteUrl);
+        if (redirectUrl) {
+          window.location.replace(redirectUrl);
+        }
         return;
       }
 
@@ -93,8 +123,19 @@ export function useSessionStart() {
         return;
       }
 
+      if (!targetSiteId) {
+        setStartError("対象サイトを選択してください");
+        return;
+      }
+
       if (minutes > remainingMinutes) {
         setStartError(`本日の残り利用可能時間は${remainingMinutes}分です`);
+        return;
+      }
+
+      const redirectUrl = returnUrl || targetSiteRule?.siteUrl || null;
+      if (!redirectUrl) {
+        setStartError("遷移先URLが設定されていません");
         return;
       }
 
@@ -104,12 +145,12 @@ export function useSessionStart() {
       try {
         const response = await sendToBackground({
           name: "start-session",
-          body: { durationMinutes: minutes },
+          body: { durationMinutes: minutes, siteId: targetSiteId, siteUrl: redirectUrl },
         });
 
         if (response.success) {
-          // 履歴を置き換えてXへ遷移（戻るでセッション開始画面に戻れない）
-          window.location.replace("https://x.com/home");
+          // 履歴を置き換えて対象サイトへ遷移（戻るでセッション開始画面に戻れない）
+          window.location.replace(redirectUrl);
         } else {
           setStartError(response.error || "セッションの開始に失敗しました");
         }
@@ -120,12 +161,25 @@ export function useSessionStart() {
         setStartLoading(false);
       }
     },
-    [remainingMinutes, selectedMinutes],
+    [remainingMinutes, selectedMinutes, returnUrl, targetSiteId, targetSiteRule, getRedirectUrl],
   );
 
-  // セッション再開（Xへ戻る）
+  // セッション再開（対象サイトへ戻る）
   const handleResumeSession = useCallback(() => {
-    window.location.replace("https://x.com/home");
+    if (!activeSession) return;
+    const redirectUrl = getRedirectUrl(activeSession.siteId, activeSession.siteUrl);
+    if (redirectUrl) {
+      window.location.replace(redirectUrl);
+    }
+  }, [activeSession, getRedirectUrl]);
+
+  const handleSiteChange = useCallback(async (siteId: string) => {
+    setTargetSiteId(siteId);
+    setSelectedMinutes(null);
+    setCustomMinutes("");
+    setStartError("");
+    const remaining = await getRemainingMinutes(siteId);
+    setRemainingMinutes(remaining);
   }, []);
 
   // セッション終了
@@ -160,11 +214,16 @@ export function useSessionStart() {
     startError,
     presets,
     activeSession,
+    siteRules,
+    targetSiteId,
+    targetSiteRule,
+    returnUrl,
     loadSessionStartData,
     handlePresetClick,
     handleCustomChange,
     handleStartSession,
     handleResumeSession,
     handleEndSession,
+    handleSiteChange,
   };
 }

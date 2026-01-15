@@ -20,7 +20,7 @@ export function SessionHistory({ sessions }: SessionHistoryProps) {
     return (
       <div className="text-center py-8 text-gray-500">
         <p>まだセッションがありません</p>
-        <p className="text-sm mt-2">セッションを開始して、意図的な情報収集を始めましょう</p>
+        <p className="text-sm mt-2">セッションを開始して、意図的な利用を始めましょう</p>
       </div>
     );
   }

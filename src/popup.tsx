@@ -1,19 +1,16 @@
 import { useEffect } from "react";
-import { DashboardStats } from "~components/DashboardStats";
 import { useSettings } from "~hooks/useSettings";
 import { useDashboard } from "~hooks/useDashboard";
 import "~styles/global.css";
 
 function Popup() {
   const { settings, loadSettings } = useSettings();
-  const { todayUsage, dashboardRemainingMinutes, dashboardLoading, loadDashboardData } =
-    useDashboard();
+  const { siteStats, dashboardLoading, loadDashboardData } = useDashboard(settings.siteRules);
 
   useEffect(() => {
     const initialize = async () => {
       try {
         await loadSettings();
-        await loadDashboardData(true); // popupではセッション履歴は不要なのでスキップ
       } catch (error) {
         console.error("Error initializing popup:", error);
       }
@@ -21,6 +18,11 @@ function Popup() {
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    loadDashboardData(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [settings.siteRules]);
 
   const handleOpenDashboard = () => {
     chrome.tabs.create({
@@ -34,21 +36,57 @@ function Popup() {
     });
   };
 
+  const getFaviconUrl = (siteUrl?: string) => {
+    if (!siteUrl) return null;
+    try {
+      const host = new URL(siteUrl).hostname;
+      return `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
+    } catch {
+      return null;
+    }
+  };
+
   return (
     <div className="w-96 min-h-[400px] bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="p-4">
         <header className="mb-4">
-          <h1 className="text-xl font-bold text-gray-800">X Blocker</h1>
+          <h1 className="text-xl font-bold text-gray-800">サイト利用制限</h1>
           <p className="text-sm text-gray-600 mt-1">今日の利用状況</p>
         </header>
 
-        <DashboardStats
-          settings={settings}
-          todayUsage={todayUsage}
-          remainingMinutes={dashboardRemainingMinutes}
-          loading={dashboardLoading}
-          compact={true}
-        />
+        {dashboardLoading ? (
+          <div className="text-center text-gray-500 py-6">読み込み中...</div>
+        ) : siteStats.length === 0 ? (
+          <div className="text-center text-gray-500 py-6">表示できるサイトがありません</div>
+        ) : (
+          <div className="space-y-2">
+            {siteStats.map((stats) => {
+              const faviconUrl = getFaviconUrl(stats.siteUrl);
+              return (
+                <div
+                  key={stats.siteId}
+                  className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-4 bg-gray-200 overflow-hidden flex items-center justify-center">
+                      {faviconUrl ? (
+                        <img src={faviconUrl} alt="" className="w-4 h-4" />
+                      ) : (
+                        <span className="text-[10px] text-gray-500">
+                          {stats.label.slice(0, 1)}
+                        </span>
+                      )}
+                    </div>
+                    <span className="text-sm text-gray-800">{stats.label}</span>
+                  </div>
+                  <span className="text-sm font-semibold text-blue-600">
+                    {stats.remainingMinutes}分
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         <div className="mt-6 flex flex-col gap-3">
           <button

@@ -1,8 +1,8 @@
 {
   "name": "x-blocker",
-  "displayName": "X Blocker",
+  "displayName": "Site Blocker",
   "version": "0.0.1",
-  "description": "X利用制限Chrome拡張機能",
+  "description": "対象サイトの利用制限Chrome拡張機能",
   "author": "ryokawamata",
   "scripts": {
     "dev": "plasmo dev",
@@ -16,8 +16,10 @@
   "dependencies": {
     "@plasmohq/messaging": "^0.7.2",
     "@plasmohq/storage": "^1.15.0",
+    "chart.js": "^4.4.7",
     "plasmo": "^0.90.5",
     "react": "^19.0.3",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^19.0.3"
   },
   "devDependencies": {
@@ -53,8 +55,7 @@
       "tabs"
     ],
     "host_permissions": [
-      "https://twitter.com/*",
-      "https://x.com/*"
+      "<all_urls>"
     ]
   }
 }

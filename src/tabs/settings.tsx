@@ -5,16 +5,22 @@ import "~styles/global.css";
 
 function SettingsPage() {
   const {
-    dailyLimit,
-    setDailyLimit,
     presetInput,
     setPresetInput,
     presets,
+    siteRulesInput,
+    globalExcludeInput,
+    setGlobalExcludeInput,
     saving,
     message,
+    hasUnsavedChanges,
     loadSettings,
     handleAddPreset,
     handleRemovePreset,
+    handleAddSiteRule,
+    handleRemoveSiteRule,
+    handleUpdateSiteRule,
+    handleSaveSettings,
   } = useSettings();
 
   useEffect(() => {
@@ -54,22 +60,28 @@ function SettingsPage() {
               </button>
               <div>
                 <h1 className="text-3xl font-bold text-gray-800">基本設定</h1>
-                <p className="text-gray-600 mt-2">X（旧Twitter）の利用制限に関する設定を行います</p>
+                <p className="text-gray-600 mt-2">対象サイトの利用制限に関する設定を行います</p>
               </div>
             </div>
           </div>
         </header>
 
         <SettingsForm
-          dailyLimit={dailyLimit}
-          setDailyLimit={setDailyLimit}
           presetInput={presetInput}
           setPresetInput={setPresetInput}
           presets={presets}
+          siteRulesInput={siteRulesInput}
+          globalExcludeInput={globalExcludeInput}
+          setGlobalExcludeInput={setGlobalExcludeInput}
           saving={saving}
           message={message}
+          hasUnsavedChanges={hasUnsavedChanges}
           onAddPreset={handleAddPreset}
           onRemovePreset={handleRemovePreset}
+          onAddSiteRule={handleAddSiteRule}
+          onRemoveSiteRule={handleRemoveSiteRule}
+          onUpdateSiteRule={handleUpdateSiteRule}
+          onSave={handleSaveSettings}
         />
       </div>
     </div>

@@ -51,7 +51,7 @@ export function ReflectionView() {
         </button>
 
         <p className="text-sm text-gray-500 text-center mt-4">
-          振り返りを入力するまで、Xにアクセスできません
+          振り返りを入力するまで、対象サイトにアクセスできません
         </p>
       </div>
     </div>

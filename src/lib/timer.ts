@@ -4,7 +4,11 @@ import { getToday, formatDate } from "./types";
 /**
  * 新しいセッションを作成
  */
-export function createSession(durationMinutes: number): Session {
+export function createSession(
+  durationMinutes: number,
+  siteId: string,
+  siteUrl?: string,
+): Session {
   const now = Date.now();
   return {
     id: `session_${now}`,
@@ -12,6 +16,8 @@ export function createSession(durationMinutes: number): Session {
     durationMinutes,
     remainingSeconds: durationMinutes * 60,
     isActive: true,
+    siteId,
+    siteUrl,
   };
 }
 

@@ -32,15 +32,12 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  // btn-gradient uses ::before, so children need z-index
-  const content = variant === "primary" ? <span className="relative z-10">{children}</span> : children;
-
   return (
     <button
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...props}
     >
-      {content}
+      {children}
     </button>
   );
 }

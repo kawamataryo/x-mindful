@@ -279,34 +279,23 @@ body {
   animation: pulse-warning 1.5s ease-in-out infinite;
 }
 
-/* ---- Gradient button with smooth hover ---- */
+/* ---- Gradient button with slide hover ---- */
 .btn-gradient {
-  position: relative;
-  overflow: hidden;
-  background: rgb(var(--accent));
-  transition: transform var(--transition-fast) ease-out;
-}
-
-.btn-gradient::before {
-  content: '';
-  position: absolute;
-  inset: 0;
   background: linear-gradient(
-    135deg,
+    90deg,
     rgb(var(--accent)) 0%,
-    rgb(var(--accent-cyan)) 100%
+    rgb(var(--accent-cyan)) 50%,
+    rgb(var(--accent)) 100%
   );
-  opacity: 1;
-  transition: opacity var(--transition-fast) ease-out;
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+  transition:
+    background-position var(--transition-normal) ease,
+    box-shadow var(--transition-fast) ease-out;
 }
 
-.btn-gradient:hover::before {
-  opacity: 0;
-}
-
-.btn-gradient > * {
-  position: relative;
-  z-index: 1;
+.btn-gradient:hover {
+  background-position: 100% 50%;
 }
 
 /* ---- Hover effects ---- */

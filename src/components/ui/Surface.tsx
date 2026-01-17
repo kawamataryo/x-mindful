@@ -8,9 +8,9 @@ interface SurfaceProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const variantClasses: Record<SurfaceVariant, string> = {
-  card: "bg-white border border-base-muted rounded-md shadow-sm hover-lift",
-  inset: "bg-base-subtle border border-base-muted rounded-md",
-  elevated: "bg-white border border-base-muted rounded-lg shadow-md hover-lift",
+  card: "glass rounded-lg hover-lift",
+  inset: "bg-white/40 backdrop-blur-sm border border-white/30 rounded-lg",
+  elevated: "glass rounded-xl shadow-lg hover-lift",
 };
 
 export function Surface({ variant = "card", className = "", children, ...props }: SurfaceProps) {

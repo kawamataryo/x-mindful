@@ -46,7 +46,7 @@ export function SettingsForm({
   return (
     <Surface variant="elevated" className="p-6 mb-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-content tracking-tight">Configuration</h2>
+        <h2 className="text-xl font-semibold text-gradient tracking-tight">Configuration</h2>
         <div className="flex items-center gap-3">
           <p className="text-xs text-content-secondary">
             {saving ? "Saving..." : "Save after changes"}
@@ -71,7 +71,7 @@ export function SettingsForm({
           {presets.map((preset) => (
             <div
               key={preset}
-              className="flex items-center gap-2 px-3 py-1.5 bg-base-subtle text-content border border-base-muted rounded-md"
+              className="flex items-center gap-2 px-3 py-1.5 glass text-content rounded-lg"
             >
               <span>{preset}min</span>
               <button
@@ -89,7 +89,7 @@ export function SettingsForm({
             value={presetInput}
             onChange={(e) => setPresetInput(e.target.value)}
             placeholder="e.g. 15"
-            className="px-4 py-2 border border-base-muted rounded-md bg-white text-content placeholder-content-tertiary focus:outline-none focus-ring"
+            className="px-4 py-2 glass rounded-lg text-content placeholder-content-tertiary focus:outline-none focus-ring"
           />
           <Button onClick={onAddPreset} variant="primary" size="sm">
             Add
@@ -107,7 +107,7 @@ export function SettingsForm({
           onChange={(e) => setGlobalExcludeInput(e.target.value)}
           placeholder="e.g.\n^https?://example.com/logout\n^https?://example.com/settings"
           rows={4}
-          className="w-full px-4 py-2 border border-base-muted rounded-md bg-white text-content placeholder-content-tertiary focus:outline-none focus-ring"
+          className="w-full px-4 py-2 glass rounded-lg text-content placeholder-content-tertiary focus:outline-none focus-ring"
         />
         <p className="text-xs text-content-secondary mt-2">1行に1つの正規表現を入力</p>
       </div>
@@ -149,7 +149,7 @@ export function SettingsForm({
                     type="text"
                     value={rule.label}
                     onChange={(e) => onUpdateSiteRule(rule.id, { label: e.target.value })}
-                    className="w-full px-3 py-2 border border-base-muted rounded-md bg-white text-content focus:outline-none focus-ring"
+                    className="w-full px-3 py-2 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg text-content focus:outline-none focus-ring"
                   />
                 </div>
                 <div>
@@ -160,7 +160,7 @@ export function SettingsForm({
                     type="number"
                     value={rule.dailyLimitInput}
                     onChange={(e) => onUpdateSiteRule(rule.id, { dailyLimitInput: e.target.value })}
-                    className="w-full px-3 py-2 border border-base-muted rounded-md bg-white text-content focus:outline-none focus-ring"
+                    className="w-full px-3 py-2 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg text-content focus:outline-none focus-ring"
                   />
                 </div>
               </div>
@@ -174,7 +174,7 @@ export function SettingsForm({
                   onChange={(e) => onUpdateSiteRule(rule.id, { includeInput: e.target.value })}
                   placeholder="e.g.\n^https?://example.com/\n^https?://app.example.com/"
                   rows={4}
-                  className="w-full px-3 py-2 border border-base-muted rounded-md bg-white text-content focus:outline-none focus-ring"
+                  className="w-full px-3 py-2 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg text-content focus:outline-none focus-ring"
                 />
               </div>
 
@@ -187,7 +187,7 @@ export function SettingsForm({
                   value={rule.siteUrlInput}
                   onChange={(e) => onUpdateSiteRule(rule.id, { siteUrlInput: e.target.value })}
                   placeholder="e.g. https://example.com/"
-                  className="w-full px-3 py-2 border border-base-muted rounded-md bg-white text-content focus:outline-none focus-ring"
+                  className="w-full px-3 py-2 bg-white/60 backdrop-blur-sm border border-white/40 rounded-lg text-content focus:outline-none focus-ring"
                 />
                 <p className="text-xs text-content-secondary mt-1">
                   favicon表示やセッション開始後の遷移先に利用

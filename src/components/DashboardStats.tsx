@@ -35,11 +35,11 @@ export function DashboardStats({
     <div className={`${gridClass} ${marginBottom}`}>
       {/* 残り時間カード */}
       <div
-        className={`bg-white rounded-md ${cardPadding} border border-base-muted ${isLow ? "border-danger/30" : ""}`}
+        className={`bg-white/50 backdrop-blur-sm rounded-lg ${cardPadding} border border-white/40 ${isLow ? "border-danger/40" : ""}`}
       >
         <h3 className="text-sm font-medium text-content-secondary mb-1">Time Remaining</h3>
         <p
-          className={`text-2xl font-bold ${isLow ? "text-danger animate-pulse-warning" : "text-accent"}`}
+          className={`text-2xl font-bold ${isLow ? "text-danger animate-pulse-warning" : "text-gradient"}`}
         >
           {remainingMinutes}min
         </p>
@@ -47,7 +47,7 @@ export function DashboardStats({
       </div>
 
       {/* 今日の利用時間カード */}
-      <div className={`bg-white rounded-md ${cardPadding} border border-base-muted`}>
+      <div className={`bg-white/50 backdrop-blur-sm rounded-lg ${cardPadding} border border-white/40`}>
         <h3 className="text-sm font-medium text-content-secondary mb-1">Time Used</h3>
         <p className="text-2xl font-bold text-success">{usedMinutes}min</p>
         <p className="text-xs text-content-tertiary mt-1">
@@ -58,7 +58,7 @@ export function DashboardStats({
       </div>
 
       {/* セッション数カード */}
-      <div className={`bg-white rounded-md ${cardPadding} border border-base-muted`}>
+      <div className={`bg-white/50 backdrop-blur-sm rounded-lg ${cardPadding} border border-white/40`}>
         <h3 className="text-sm font-medium text-content-secondary mb-1">Sessions</h3>
         <p className="text-2xl font-bold text-content">{sessionCount}</p>
         <p className="text-xs text-content-tertiary mt-1">

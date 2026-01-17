@@ -3,49 +3,66 @@
 @tailwind utilities;
 
 /* ============================================
-   Design Tokens — Minimal Tech
+   Design Tokens — Liquid Glass
    ============================================ */
 :root {
   color-scheme: light;
 
-  /* ---- Colors ---- */
-  /* Base (backgrounds) - cool gray scale */
-  --base: 250 250 252; /* pure white with hint of blue #fafafc */
-  --base-subtle: 245 246 250; /* very light cool gray #f5f6fa */
-  --base-muted: 235 237 242; /* card borders #ebeff2 */
+  /* ---- Gradient Colors ---- */
+  --gradient-1: #e0e7ff; /* lavender */
+  --gradient-2: #fce7f3; /* pink */
+  --gradient-3: #dbeafe; /* sky blue */
+  --gradient-4: #f3e8ff; /* light purple */
 
-  /* Text */
-  --text: 20 22 28; /* near black #14161c */
-  --text-secondary: 100 105 120; /* #646978 */
-  --text-tertiary: 160 165 175; /* #a0a5af */
+  /* ---- Glass ---- */
+  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg-hover: rgba(255, 255, 255, 0.8);
+  --glass-border: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 8px 32px rgba(99, 102, 241, 0.12);
 
-  /* Accent - electric blue (iOS style) */
-  --accent: 0 122 255; /* #007aff */
-  --accent-hover: 0 100 220; /* #0064dc */
+  /* ---- Base (fallback) ---- */
+  --base: 248 250 252; /* #f8fafc */
+  --base-subtle: 241 245 249; /* #f1f5f9 */
+  --base-muted: 226 232 240; /* #e2e8f0 */
 
-  /* Semantic */
-  --success: 52 199 89; /* iOS green #34c759 */
-  --warning: 255 149 0; /* iOS orange #ff9500 */
-  --danger: 255 59 48; /* iOS red #ff3b30 */
+  /* ---- Text ---- */
+  --text: 30 27 75; /* deep indigo #1e1b4b */
+  --text-secondary: 79 70 129; /* #4f4681 */
+  --text-tertiary: 139 132 175; /* #8b84af */
 
-  /* ---- Shadows - very subtle ---- */
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+  /* ---- Accent ---- */
+  --accent: 139 92 246; /* violet #8b5cf6 */
+  --accent-hover: 124 58 237; /* #7c3aed */
+  --accent-cyan: 6 182 212; /* cyan #06b6d4 */
 
-  /* ---- Radii - sharp ---- */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  /* ---- Semantic ---- */
+  --success: 16 185 129; /* emerald #10b981 */
+  --warning: 245 158 11; /* amber #f59e0b */
+  --danger: 239 68 68; /* rose #ef4444 */
+
+  /* ---- Shadows (purple tinted) ---- */
+  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.06);
+  --shadow-md: 0 8px 24px rgba(99, 102, 241, 0.1);
+  --shadow-lg: 0 16px 48px rgba(99, 102, 241, 0.15);
+
+  /* ---- Radii (modern, larger) ---- */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
 
   /* ---- Focus ring ---- */
-  --focus-ring: 0 0 0 2px rgb(var(--base)), 0 0 0 4px rgb(var(--accent));
+  --focus-ring: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 0 0 4px rgb(var(--accent));
 
   /* ---- Transitions ---- */
   --transition-fast: 150ms;
-  --transition-normal: 250ms;
-  --transition-slow: 400ms;
+  --transition-normal: 300ms;
+  --transition-slow: 500ms;
+
+  /* ---- Particles ---- */
+  --particle-1: rgba(139, 92, 246, 0.3);
+  --particle-2: rgba(6, 182, 212, 0.25);
+  --particle-3: rgba(236, 72, 153, 0.2);
 }
 
 /* ---- Reduced motion ---- */
@@ -74,24 +91,125 @@ body {
   box-shadow: var(--focus-ring);
 }
 
-/* ---- Clean background utility ---- */
-.bg-base {
-  background-color: rgb(var(--base));
-}
-
-.bg-base-subtle {
-  background-color: rgb(var(--base-subtle));
+/* ============================================
+   Mesh Gradient Background
+   ============================================ */
+.bg-mesh {
+  background-color: #f8fafc;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 0% 0%, var(--gradient-1) 0px, transparent 50%),
+    radial-gradient(ellipse 60% 40% at 100% 0%, var(--gradient-2) 0px, transparent 50%),
+    radial-gradient(ellipse 50% 50% at 100% 100%, var(--gradient-3) 0px, transparent 50%),
+    radial-gradient(ellipse 70% 60% at 0% 100%, var(--gradient-4) 0px, transparent 50%);
+  background-attachment: fixed;
 }
 
 /* ============================================
-   Animations — Subtle & Precise
+   Glass Effect
+   ============================================ */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-hover:hover {
+  background: var(--glass-bg-hover);
+}
+
+/* ============================================
+   Floating Particles
+   ============================================ */
+.particles {
+  position: relative;
+  overflow: hidden;
+}
+
+.particles::before,
+.particles::after {
+  content: '';
+  position: fixed;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+.particles::before {
+  width: 300px;
+  height: 300px;
+  background: var(--particle-1);
+  top: 10%;
+  left: 5%;
+  filter: blur(80px);
+  animation: float-1 20s ease-in-out infinite;
+}
+
+.particles::after {
+  width: 250px;
+  height: 250px;
+  background: var(--particle-2);
+  bottom: 15%;
+  right: 10%;
+  filter: blur(70px);
+  animation: float-2 25s ease-in-out infinite;
+}
+
+/* Additional particle via child pseudo-element */
+.particles-extra::before {
+  content: '';
+  position: fixed;
+  width: 200px;
+  height: 200px;
+  background: var(--particle-3);
+  top: 60%;
+  left: 60%;
+  border-radius: 50%;
+  filter: blur(60px);
+  pointer-events: none;
+  opacity: 0.5;
+  animation: float-3 18s ease-in-out infinite;
+}
+
+@keyframes float-1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -20px) scale(1.05);
+  }
+  66% {
+    transform: translate(-20px, 15px) scale(0.95);
+  }
+}
+
+@keyframes float-2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-40px, -30px) scale(1.1);
+  }
+}
+
+@keyframes float-3 {
+  0%, 100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(25px, 35px);
+  }
+}
+
+/* ============================================
+   Animations
    ============================================ */
 
-/* ---- Keyframes ---- */
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(12px);
   }
   to {
     opacity: 1;
@@ -100,12 +218,20 @@ body {
 }
 
 @keyframes pulse-warning {
-  0%,
-  100% {
+  0%, 100% {
     opacity: 1;
   }
   50% {
     opacity: 0.5;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
   }
 }
 
@@ -114,22 +240,29 @@ body {
   animation: fade-in-up var(--transition-normal) ease-out both;
 }
 
-/* Staggered delays for lists */
-.animate-fade-in-up-1 {
-  animation-delay: 40ms;
-}
-.animate-fade-in-up-2 {
-  animation-delay: 80ms;
-}
-.animate-fade-in-up-3 {
-  animation-delay: 120ms;
-}
-.animate-fade-in-up-4 {
-  animation-delay: 160ms;
-}
+.animate-fade-in-up-1 { animation-delay: 50ms; }
+.animate-fade-in-up-2 { animation-delay: 100ms; }
+.animate-fade-in-up-3 { animation-delay: 150ms; }
+.animate-fade-in-up-4 { animation-delay: 200ms; }
 
 .animate-pulse-warning {
   animation: pulse-warning 1.5s ease-in-out infinite;
+}
+
+/* ---- Gradient button shimmer ---- */
+.gradient-shimmer {
+  background: linear-gradient(
+    135deg,
+    rgb(var(--accent)) 0%,
+    rgb(var(--accent-cyan)) 50%,
+    rgb(var(--accent)) 100%
+  );
+  background-size: 200% 100%;
+  transition: background-position var(--transition-normal) ease;
+}
+
+.gradient-shimmer:hover {
+  background-position: 100% 0;
 }
 
 /* ---- Hover effects ---- */
@@ -140,19 +273,28 @@ body {
 }
 
 .hover-lift:hover {
-  transform: translateY(-1px);
+  transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }
 
-/* Subtle scale for buttons */
 .hover-scale {
   transition: transform var(--transition-fast) ease-out;
 }
 
 .hover-scale:hover {
-  transform: scale(1.01);
+  transform: scale(1.02);
 }
 
 .hover-scale:active {
-  transform: scale(0.99);
+  transform: scale(0.98);
+}
+
+/* ============================================
+   Gradient Text
+   ============================================ */
+.text-gradient {
+  background: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-cyan)) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }

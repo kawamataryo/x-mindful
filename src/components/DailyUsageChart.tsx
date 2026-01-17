@@ -22,15 +22,15 @@ const formatDate = (dateStr: string): string => {
   return `${Number(m)}/${Number(d)}`;
 };
 
-// Minimal tech palette: clean, vibrant colors
+// Liquid Glass palette: purple to cyan gradient spectrum
 const palette = [
-  "rgba(0, 122, 255, 0.75)", // iOS blue
-  "rgba(52, 199, 89, 0.75)", // iOS green
-  "rgba(255, 149, 0, 0.75)", // iOS orange
-  "rgba(175, 82, 222, 0.75)", // iOS purple
-  "rgba(255, 59, 48, 0.75)", // iOS red
-  "rgba(90, 200, 250, 0.75)", // iOS cyan
-  "rgba(255, 204, 0, 0.75)", // iOS yellow
+  "rgba(139, 92, 246, 0.75)", // violet
+  "rgba(6, 182, 212, 0.7)", // cyan
+  "rgba(236, 72, 153, 0.7)", // pink
+  "rgba(59, 130, 246, 0.7)", // blue
+  "rgba(168, 85, 247, 0.7)", // purple
+  "rgba(20, 184, 166, 0.7)", // teal
+  "rgba(244, 114, 182, 0.65)", // rose
 ];
 
 export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChartProps) {
@@ -46,7 +46,7 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
     label: rule.label,
     data: reversed.map((usage) => usage.siteUsage[rule.id]?.totalUsedMinutes || 0),
     backgroundColor: palette[index % palette.length],
-    borderRadius: 3,
+    borderRadius: 6,
   }));
 
   const allValues = datasets.flatMap((dataset) => dataset.data as number[]);
@@ -67,7 +67,7 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
       legend: {
         position: "bottom" as const,
         labels: {
-          color: "rgb(100, 105, 120)", // text-secondary
+          color: "rgb(79, 70, 129)", // text-secondary
         },
       },
       tooltip: {
@@ -79,20 +79,20 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
     scales: {
       x: {
         ticks: {
-          color: "rgb(100, 105, 120)",
+          color: "rgb(79, 70, 129)",
         },
         grid: {
-          color: "rgba(235, 239, 242, 0.8)", // base-muted
+          color: "rgba(139, 92, 246, 0.1)", // subtle purple grid
         },
       },
       y: {
         beginAtZero: true,
         ticks: {
           callback: (value: any) => `${value}min`,
-          color: "rgb(100, 105, 120)",
+          color: "rgb(79, 70, 129)",
         },
         grid: {
-          color: "rgba(235, 239, 242, 0.8)",
+          color: "rgba(139, 92, 246, 0.1)",
         },
       },
     },

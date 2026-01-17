@@ -18,6 +18,7 @@ module.exports = {
         accent: {
           DEFAULT: "rgb(var(--accent) / <alpha-value>)",
           hover: "rgb(var(--accent-hover) / <alpha-value>)",
+          cyan: "rgb(var(--accent-cyan) / <alpha-value>)",
         },
         success: "rgb(var(--success) / <alpha-value>)",
         warning: "rgb(var(--warning) / <alpha-value>)",
@@ -27,12 +28,16 @@ module.exports = {
         sm: "var(--shadow-sm)",
         md: "var(--shadow-md)",
         lg: "var(--shadow-lg)",
+        glass: "var(--glass-shadow)",
       },
       borderRadius: {
         sm: "var(--radius-sm)",
         md: "var(--radius-md)",
         lg: "var(--radius-lg)",
         xl: "var(--radius-xl)",
+      },
+      backdropBlur: {
+        glass: "12px",
       },
     },
   },

@@ -35,9 +35,9 @@ export function SessionStartView() {
   if (activeSession && activeSession.isActive && activeSession.remainingSeconds > 0) {
     const remaining = formatTime(activeSession.remainingSeconds);
     return (
-      <div className="min-h-screen bg-base flex items-center justify-center p-4">
-        <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up">
-          <h2 className="text-3xl font-semibold text-content mb-3 text-center tracking-tight">
+      <div className="min-h-screen bg-mesh particles flex items-center justify-center p-4">
+        <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up relative z-10">
+          <h2 className="text-3xl font-semibold text-gradient mb-3 text-center tracking-tight">
             Session Active
           </h2>
           <p className="text-content-secondary text-center mb-2">
@@ -45,7 +45,7 @@ export function SessionStartView() {
             <strong className="text-accent">{activeSiteLabel || activeSession.siteId}</strong>
           </p>
           <p className="text-content-secondary text-center mb-6">
-            残り: <strong className="text-2xl text-accent">{remaining}</strong>
+            残り: <strong className="text-2xl text-gradient">{remaining}</strong>
           </p>
 
           {startError && (
@@ -77,15 +77,15 @@ export function SessionStartView() {
   }
 
   return (
-    <div className="min-h-screen bg-base flex items-center justify-center p-4">
-      <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up">
-        <h2 className="text-3xl font-semibold text-content mb-4 text-center tracking-tight">
+    <div className="min-h-screen bg-mesh particles particles-extra flex items-center justify-center p-4">
+      <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up relative z-10">
+        <h2 className="text-3xl font-semibold text-gradient mb-4 text-center tracking-tight">
           Start Session
         </h2>
 
         <div className="mb-6">
           <label className="block mb-2 font-medium text-content-secondary">Target Site</label>
-          <div className="px-4 py-3 border border-base-muted rounded-md text-content bg-base-subtle flex items-center gap-3">
+          <div className="glass px-4 py-3 rounded-lg text-content flex items-center gap-3">
             <FaviconBadge
               siteUrl={targetSiteRule?.siteUrl || returnUrl || undefined}
               label={targetSiteRule?.label || targetSiteId || undefined}
@@ -97,7 +97,7 @@ export function SessionStartView() {
 
         <p className="text-content-secondary text-center mb-6">
           Time Remaining Today:{" "}
-          <strong className="text-2xl text-accent">{remainingMinutes}min</strong>
+          <strong className="text-2xl text-gradient">{remainingMinutes}min</strong>
         </p>
 
         <div className="mb-6">
@@ -108,14 +108,14 @@ export function SessionStartView() {
                 key={minutes}
                 onClick={() => handlePresetClick(minutes)}
                 disabled={minutes > remainingMinutes || startLoading}
-                className={`px-6 py-4 rounded-md font-semibold text-lg transition-all focus-ring ${
+                className={`px-6 py-4 rounded-lg font-semibold text-lg transition-all focus-ring ${
                   selectedMinutes === minutes
-                    ? "border-2 border-accent bg-base-subtle text-accent shadow-sm"
-                    : "border border-base-muted bg-white text-content"
+                    ? "glass border-2 border-accent text-accent shadow-md"
+                    : "glass text-content"
                 } ${
                   minutes > remainingMinutes || startLoading
                     ? "opacity-40 cursor-not-allowed"
-                    : "cursor-pointer hover:border-accent hover:shadow-sm"
+                    : "cursor-pointer hover:border-accent/50 hover:shadow-md"
                 }`}
               >
                 {minutes}min
@@ -132,7 +132,7 @@ export function SessionStartView() {
             onChange={handleCustomChange}
             placeholder="e.g. 15"
             disabled={startLoading}
-            className="w-full px-4 py-3 border border-base-muted rounded-md bg-white text-content placeholder-content-tertiary text-lg focus:outline-none focus-ring disabled:bg-base-subtle disabled:text-content-secondary"
+            className="w-full px-4 py-3 glass rounded-lg text-content placeholder-content-tertiary text-lg focus:outline-none focus-ring disabled:opacity-60"
           />
         </div>
 

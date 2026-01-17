@@ -8,10 +8,12 @@ export function ReflectionView() {
   const canSave = reflection.trim().length > 0 && !reflectionLoading;
 
   return (
-    <div className="min-h-screen bg-base flex items-center justify-center p-4">
-      <Surface variant="elevated" className="p-8 max-w-lg w-full animate-fade-in-up">
+    <div className="min-h-screen bg-mesh particles particles-extra flex items-center justify-center p-4">
+      <Surface variant="elevated" className="p-8 max-w-lg w-full animate-fade-in-up relative z-10">
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-semibold text-content mb-3 tracking-tight">Session Complete</h2>
+          <h2 className="text-4xl font-semibold text-gradient mb-3 tracking-tight">
+            Session Complete
+          </h2>
           <p className="text-lg text-content-secondary">この時間で何を得られましたか？</p>
         </div>
 
@@ -30,7 +32,7 @@ export function ReflectionView() {
             placeholder="例: 新しい技術のトレンドを3つ発見できた"
             rows={5}
             disabled={reflectionLoading}
-            className="w-full px-4 py-3 border border-base-muted rounded-md bg-white text-content placeholder-content-tertiary text-base resize-none focus:outline-none focus-ring disabled:bg-base-subtle"
+            className="w-full px-4 py-3 glass rounded-lg text-content placeholder-content-tertiary text-base resize-none focus:outline-none focus-ring disabled:opacity-60"
           />
           <p className="text-sm text-content-secondary mt-2">{reflection.trim().length} characters</p>
         </div>

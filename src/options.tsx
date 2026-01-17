@@ -57,12 +57,12 @@ function OptionsPage() {
 
   // デフォルト画面（ダッシュボード）
   return (
-    <div className="min-h-screen bg-base">
-      <div className="max-w-4xl mx-auto py-8 px-4">
+    <div className="min-h-screen bg-mesh particles particles-extra">
+      <div className="max-w-4xl mx-auto py-8 px-4 relative z-10">
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-semibold text-content tracking-tight">Site Limiter</h1>
+              <h1 className="text-3xl font-semibold text-gradient tracking-tight">Site Limiter</h1>
               <p className="text-content-secondary mt-2">
                 サイトの利用時間を管理して、意図的な行動をサポート
               </p>

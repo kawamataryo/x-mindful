@@ -33,8 +33,8 @@ function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-base">
-      <div className="max-w-4xl mx-auto py-8 px-4">
+    <div className="min-h-screen bg-mesh particles particles-extra">
+      <div className="max-w-4xl mx-auto py-8 px-4 relative z-10">
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-4">
@@ -55,7 +55,7 @@ function SettingsPage() {
                 </svg>
               </Button>
               <div>
-                <h1 className="text-3xl font-semibold text-content tracking-tight">Settings</h1>
+                <h1 className="text-3xl font-semibold text-gradient tracking-tight">Settings</h1>
                 <p className="text-content-secondary mt-2">サイトルールと時間制限を設定</p>
               </div>
             </div>

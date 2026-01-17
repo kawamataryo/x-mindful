@@ -38,10 +38,10 @@ function Popup() {
   };
 
   return (
-    <div className="w-96 min-h-[400px] bg-base">
-      <div className="p-4">
+    <div className="w-96 min-h-[400px] bg-mesh particles">
+      <div className="p-4 relative z-10">
         <header className="mb-4">
-          <h1 className="text-xl font-semibold text-content tracking-tight">Site Limiter</h1>
+          <h1 className="text-xl font-semibold text-gradient tracking-tight">Site Limiter</h1>
           <p className="text-sm text-content-secondary mt-1">Today's Usage</p>
         </header>
 

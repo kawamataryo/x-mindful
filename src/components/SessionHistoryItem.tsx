@@ -11,7 +11,7 @@ export function SessionHistoryItem({ session }: SessionHistoryItemProps) {
   const isToday = session.date === new Date().toISOString().split("T")[0];
 
   return (
-    <Surface variant="inset" className="p-3 hover:bg-base-muted/50 transition-colors">
+    <Surface variant="inset" className="p-3 glass-hover transition-colors">
       <div className="flex justify-between items-center mb-1">
         <div className="flex items-center gap-2">
           <FaviconBadge
@@ -41,7 +41,7 @@ export function SessionHistoryItem({ session }: SessionHistoryItemProps) {
       </div>
       {session.reflection && (
         <div className="relative group mt-2">
-          <div className="bg-white rounded-md border border-base-muted p-3 pr-10">
+          <div className="bg-white/60 backdrop-blur-sm rounded-lg border border-white/40 p-3 pr-10">
             <p className="text-sm text-content whitespace-pre-wrap">{session.reflection}</p>
           </div>
           <CopyButton text={session.reflection} />

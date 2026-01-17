@@ -110,22 +110,19 @@ const TimerDisplay = () => {
 
   return (
     <div
-      className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[999999] flex flex-col items-center gap-2 px-4 py-3 rounded-xl"
+      className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[999999] flex items-center gap-2 px-3 py-1.5 rounded-full"
       style={{
-        background: "rgba(255, 255, 255, 0.85)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
-        boxShadow: "0 8px 32px rgba(99, 102, 241, 0.15), 0 2px 8px rgba(0, 0, 0, 0.08)",
+        background: "rgba(255, 255, 255, 0.6)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.08)",
       }}
     >
       {/* 残り時間テキスト */}
       <div
-        className="text-base font-bold text-center"
+        className="text-xs font-medium"
         style={{
-          background: "linear-gradient(135deg, rgb(139, 92, 246) 0%, rgb(6, 182, 212) 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          backgroundClip: "text",
+          color: "rgb(139, 92, 246)",
         }}
       >
         {timeText}
@@ -133,9 +130,9 @@ const TimerDisplay = () => {
 
       {/* 直線プログレスバー */}
       <div
-        className="w-48 h-1.5 rounded-full overflow-hidden"
+        className="w-20 h-1 rounded-full overflow-hidden"
         style={{
-          backgroundColor: "rgba(139, 92, 246, 0.15)",
+          backgroundColor: "rgba(139, 92, 246, 0.12)",
         }}
       >
         <div

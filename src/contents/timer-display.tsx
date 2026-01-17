@@ -112,17 +112,17 @@ const TimerDisplay = () => {
     <div
       className="fixed bottom-4 left-1/2 -translate-x-1/2 z-[999999] flex items-center gap-2 px-3 py-1.5 rounded-full"
       style={{
-        background: "rgba(255, 255, 255, 0.6)",
+        background: "rgba(255, 255, 255, 0.9)",
         backdropFilter: "blur(8px)",
         WebkitBackdropFilter: "blur(8px)",
-        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.08)",
+        boxShadow: "0 2px 12px rgba(0, 0, 0, 0.12)",
       }}
     >
       {/* 残り時間テキスト */}
       <div
-        className="text-xs font-medium"
+        className="text-xs font-semibold"
         style={{
-          color: "rgb(139, 92, 246)",
+          color: "rgb(109, 40, 217)", /* より濃いパープル */
         }}
       >
         {timeText}
@@ -130,16 +130,16 @@ const TimerDisplay = () => {
 
       {/* 直線プログレスバー */}
       <div
-        className="w-20 h-1 rounded-full overflow-hidden"
+        className="w-20 h-1.5 rounded-full overflow-hidden"
         style={{
-          backgroundColor: "rgba(139, 92, 246, 0.12)",
+          backgroundColor: "rgba(139, 92, 246, 0.25)",
         }}
       >
         <div
           className="h-full rounded-full transition-all duration-1000 ease-linear"
           style={{
             width: `${progress}%`,
-            background: "linear-gradient(90deg, rgb(139, 92, 246) 0%, rgb(6, 182, 212) 100%)",
+            background: "linear-gradient(90deg, rgb(124, 58, 237) 0%, rgb(6, 182, 212) 100%)",
           }}
         />
       </div>

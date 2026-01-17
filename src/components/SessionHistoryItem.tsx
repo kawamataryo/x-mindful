@@ -41,7 +41,7 @@ export function SessionHistoryItem({ session }: SessionHistoryItemProps) {
       </div>
       {session.reflection && (
         <div className="relative group mt-2">
-          <div className="bg-white/60 backdrop-blur-sm rounded-lg border border-[rgba(139,92,246,0.12)] p-3 pr-10 transition-all duration-150">
+          <div className="bg-white/50 backdrop-blur-sm rounded-lg shadow-sm p-3 pr-10 transition-all duration-150">
             <p className="text-sm text-content whitespace-pre-wrap">{session.reflection}</p>
           </div>
           <CopyButton text={session.reflection} />

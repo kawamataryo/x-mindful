@@ -35,7 +35,7 @@ export function DashboardStats({
     <div className={`${gridClass} ${marginBottom}`}>
       {/* 残り時間カード */}
       <div
-        className={`bg-white/60 backdrop-blur-sm rounded-lg ${cardPadding} border transition-all duration-150 ${isLow ? "border-danger/40" : "border-[rgba(139,92,246,0.15)]"}`}
+        className={`glass rounded-lg ${cardPadding} ${isLow ? "ring-1 ring-danger/30" : ""}`}
       >
         <h3 className="text-sm font-medium text-content-secondary mb-1">Time Remaining</h3>
         <p
@@ -47,7 +47,7 @@ export function DashboardStats({
       </div>
 
       {/* 今日の利用時間カード */}
-      <div className={`bg-white/60 backdrop-blur-sm rounded-lg ${cardPadding} border border-[rgba(139,92,246,0.15)] transition-all duration-150`}>
+      <div className={`glass rounded-lg ${cardPadding}`}>
         <h3 className="text-sm font-medium text-content-secondary mb-1">Time Used</h3>
         <p className="text-2xl font-bold text-success">{usedMinutes}min</p>
         <p className="text-xs text-content-tertiary mt-1">
@@ -58,7 +58,7 @@ export function DashboardStats({
       </div>
 
       {/* セッション数カード */}
-      <div className={`bg-white/60 backdrop-blur-sm rounded-lg ${cardPadding} border border-[rgba(139,92,246,0.15)] transition-all duration-150`}>
+      <div className={`glass rounded-lg ${cardPadding}`}>
         <h3 className="text-sm font-medium text-content-secondary mb-1">Sessions</h3>
         <p className="text-2xl font-bold text-content">{sessionCount}</p>
         <p className="text-xs text-content-tertiary mt-1">

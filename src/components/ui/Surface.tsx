@@ -9,7 +9,7 @@ interface SurfaceProps extends HTMLAttributes<HTMLDivElement> {
 
 const variantClasses: Record<SurfaceVariant, string> = {
   card: "glass rounded-lg hover-lift",
-  inset: "bg-white/50 backdrop-blur-sm border border-[rgba(139,92,246,0.12)] rounded-lg transition-all duration-150",
+  inset: "bg-white/50 backdrop-blur-sm rounded-lg shadow-sm transition-all duration-150",
   elevated: "glass rounded-xl shadow-lg hover-lift",
 };
 

@@ -10,13 +10,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 font-medium transition-all focus-ring rounded-lg disabled:opacity-50 disabled:cursor-not-allowed";
+  "inline-flex items-center justify-center gap-2 font-medium focus-ring rounded-lg disabled:opacity-50 disabled:cursor-not-allowed";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "gradient-shimmer text-white shadow-md hover:shadow-lg hover-scale",
-  secondary: "glass glass-hover text-content hover-scale",
+  primary: "btn-gradient text-white shadow-md hover:shadow-lg",
+  secondary: "glass glass-hover text-content transition-all duration-150",
   quiet: "bg-transparent text-content-secondary hover:text-content hover:bg-white/40 transition-all duration-150",
-  danger: "bg-danger text-white hover:opacity-90 shadow-md hover-scale transition-opacity duration-150",
+  danger: "bg-danger text-white hover:bg-danger/90 shadow-md transition-colors duration-150",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -32,12 +32,15 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
+  // btn-gradient uses ::before, so children need z-index
+  const content = variant === "primary" ? <span className="relative z-10">{children}</span> : children;
+
   return (
     <button
       className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
       {...props}
     >
-      {children}
+      {content}
     </button>
   );
 }

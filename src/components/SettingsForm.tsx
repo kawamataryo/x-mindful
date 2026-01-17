@@ -71,7 +71,7 @@ export function SettingsForm({
           {presets.map((preset) => (
             <div
               key={preset}
-              className="flex items-center gap-2 px-3 py-1.5 glass text-content rounded-lg"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/60 backdrop-blur-sm shadow-sm text-content rounded-lg"
             >
               <span>{preset}min</span>
               <button

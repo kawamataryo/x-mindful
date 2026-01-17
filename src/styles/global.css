@@ -15,11 +15,14 @@
   --gradient-4: #f3e8ff; /* light purple */
 
   /* ---- Glass ---- */
-  --glass-bg: rgba(255, 255, 255, 0.65);
+  --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-bg-hover: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(139, 92, 246, 0.15); /* subtle purple border for visibility */
-  --glass-border-strong: rgba(139, 92, 246, 0.25); /* stronger for inputs */
-  --glass-shadow: 0 8px 32px rgba(99, 102, 241, 0.12);
+  --glass-shadow: 0 4px 24px rgba(99, 102, 241, 0.08), 0 1px 3px rgba(99, 102, 241, 0.04);
+  --glass-shadow-hover: 0 8px 32px rgba(99, 102, 241, 0.12), 0 2px 6px rgba(99, 102, 241, 0.06);
+
+  /* ---- Input specific ---- */
+  --input-border: rgba(139, 92, 246, 0.18);
+  --input-border-hover: rgba(139, 92, 246, 0.28);
 
   /* ---- Base (fallback) ---- */
   --base: 248 250 252; /* #f8fafc */
@@ -106,32 +109,30 @@ body {
 }
 
 /* ============================================
-   Glass Effect
+   Glass Effect (borderless, shadow-based)
    ============================================ */
 .glass {
   background: var(--glass-bg);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
   box-shadow: var(--glass-shadow);
   transition:
     background var(--transition-fast) ease-out,
-    border-color var(--transition-fast) ease-out,
     box-shadow var(--transition-fast) ease-out;
 }
 
 .glass-hover:hover {
   background: var(--glass-bg-hover);
-  border-color: rgba(139, 92, 246, 0.25);
+  box-shadow: var(--glass-shadow-hover);
 }
 
-/* ---- Glass Input (for form fields) ---- */
+/* ---- Glass Input (for form fields - with subtle border) ---- */
 .glass-input {
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.75);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--glass-border-strong);
-  box-shadow: inset 0 1px 2px rgba(99, 102, 241, 0.04);
+  border: 1px solid var(--input-border);
+  box-shadow: inset 0 1px 2px rgba(99, 102, 241, 0.03);
   transition:
     background var(--transition-fast) ease-out,
     border-color var(--transition-fast) ease-out,
@@ -139,13 +140,13 @@ body {
 }
 
 .glass-input:hover {
-  border-color: rgba(139, 92, 246, 0.35);
+  border-color: var(--input-border-hover);
 }
 
 .glass-input:focus {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.9);
   border-color: rgb(var(--accent));
-  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
 }
 
 /* ============================================
@@ -278,20 +279,34 @@ body {
   animation: pulse-warning 1.5s ease-in-out infinite;
 }
 
-/* ---- Gradient button shimmer ---- */
-.gradient-shimmer {
+/* ---- Gradient button with smooth hover ---- */
+.btn-gradient {
+  position: relative;
+  overflow: hidden;
+  background: rgb(var(--accent));
+  transition: transform var(--transition-fast) ease-out;
+}
+
+.btn-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
   background: linear-gradient(
     135deg,
     rgb(var(--accent)) 0%,
-    rgb(var(--accent-cyan)) 50%,
-    rgb(var(--accent)) 100%
+    rgb(var(--accent-cyan)) 100%
   );
-  background-size: 200% 100%;
-  transition: background-position var(--transition-normal) ease;
+  opacity: 1;
+  transition: opacity var(--transition-fast) ease-out;
 }
 
-.gradient-shimmer:hover {
-  background-position: 100% 0;
+.btn-gradient:hover::before {
+  opacity: 0;
+}
+
+.btn-gradient > * {
+  position: relative;
+  z-index: 1;
 }
 
 /* ---- Hover effects ---- */

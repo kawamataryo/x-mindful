@@ -28,7 +28,7 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
   };
 
   return (
-    <Surface variant="elevated" className="p-6 mb-6">
+    <Surface variant="elevated" className="p-6 mb-6 animate-fade-in-up">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-ink">今日の利用状況</h2>
       </div>

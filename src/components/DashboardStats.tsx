@@ -32,9 +32,13 @@ export function DashboardStats({
   return (
     <div className={`${gridClass} ${marginBottom}`}>
       {/* 残り時間カード */}
-      <div className={`bg-white rounded-md ${cardPadding} border border-paper-3`}>
+      <div
+        className={`bg-white rounded-md ${cardPadding} border border-paper-3 ${isLow ? "border-danger/30" : ""}`}
+      >
         <h3 className="text-sm font-medium text-ink-muted mb-1">残り利用可能時間</h3>
-        <p className={`text-2xl font-bold ${isLow ? "text-danger" : "text-accent"}`}>
+        <p
+          className={`text-2xl font-bold ${isLow ? "text-danger animate-pulse-warning" : "text-accent"}`}
+        >
           {remainingMinutes}分
         </p>
         <p className="text-xs text-ink-faint mt-1">上限: {dailyLimitMinutes}分</p>

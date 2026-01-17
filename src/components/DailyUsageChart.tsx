@@ -24,13 +24,13 @@ const formatDate = (dateStr: string): string => {
 
 // Paper & ink palette: muted, cohesive colors
 const palette = [
-  "rgba(59, 100, 140, 0.75)",  // accent blue
-  "rgba(60, 120, 80, 0.75)",   // muted green
-  "rgba(175, 100, 60, 0.75)",  // warm terracotta
-  "rgba(120, 90, 140, 0.75)",  // muted purple
-  "rgba(160, 130, 60, 0.75)",  // olive/mustard
-  "rgba(140, 80, 100, 0.75)",  // dusty rose
-  "rgba(80, 130, 130, 0.75)",  // teal
+  "rgba(59, 100, 140, 0.75)", // accent blue
+  "rgba(60, 120, 80, 0.75)", // muted green
+  "rgba(175, 100, 60, 0.75)", // warm terracotta
+  "rgba(120, 90, 140, 0.75)", // muted purple
+  "rgba(160, 130, 60, 0.75)", // olive/mustard
+  "rgba(140, 80, 100, 0.75)", // dusty rose
+  "rgba(80, 130, 130, 0.75)", // teal
 ];
 
 export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChartProps) {

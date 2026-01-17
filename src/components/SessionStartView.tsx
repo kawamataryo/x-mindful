@@ -35,8 +35,8 @@ export function SessionStartView() {
   if (activeSession && activeSession.isActive && activeSession.remainingSeconds > 0) {
     const remaining = formatTime(activeSession.remainingSeconds);
     return (
-      <div className="min-h-screen bg-paper-grain flex items-center justify-center p-4">
-        <Surface variant="elevated" className="p-8 max-w-md w-full">
+      <div className="min-h-screen bg-paper-ruled flex items-center justify-center p-4">
+        <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up">
           <h2 className="text-3xl font-bold text-ink mb-3 text-center">セッション継続中</h2>
           <p className="text-ink-muted text-center mb-2">
             対象サイト:{" "}
@@ -75,8 +75,8 @@ export function SessionStartView() {
   }
 
   return (
-    <div className="min-h-screen bg-paper-grain flex items-center justify-center p-4">
-      <Surface variant="elevated" className="p-8 max-w-md w-full">
+    <div className="min-h-screen bg-paper-ruled flex items-center justify-center p-4">
+      <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up">
         <h2 className="text-3xl font-bold text-ink mb-4 text-center">セッション開始</h2>
 
         <div className="mb-6">

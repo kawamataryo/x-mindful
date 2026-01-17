@@ -38,7 +38,7 @@ function Popup() {
   };
 
   return (
-    <div className="w-96 min-h-[400px] bg-paper-grain">
+    <div className="w-96 min-h-[400px] bg-paper-ruled">
       <div className="p-4">
         <header className="mb-4">
           <h1 className="text-xl font-bold text-ink">サイト利用制限</h1>
@@ -51,19 +51,22 @@ function Popup() {
           <div className="text-center text-ink-muted py-6">表示できるサイトがありません</div>
         ) : (
           <div className="space-y-2">
-            {siteStats.map((stats) => {
+            {siteStats.map((stats, index) => {
               const isLow = stats.remainingMinutes <= 5;
+              const delayClass = index < 4 ? `animate-fade-in-up-${index + 1}` : "";
               return (
                 <Surface
                   key={stats.siteId}
                   variant="card"
-                  className="flex items-center justify-between gap-3 px-3 py-2"
+                  className={`flex items-center justify-between gap-3 px-3 py-2 animate-fade-in-up ${delayClass}`}
                 >
                   <div className="flex items-center gap-2">
                     <FaviconBadge siteUrl={stats.siteUrl} label={stats.label} size="sm" />
                     <span className="text-sm text-ink">{stats.label}</span>
                   </div>
-                  <span className={`text-sm font-semibold ${isLow ? "text-danger" : "text-accent"}`}>
+                  <span
+                    className={`text-sm font-semibold ${isLow ? "text-danger animate-pulse-warning" : "text-accent"}`}
+                  >
                     残り {stats.remainingMinutes}分
                   </span>
                 </Surface>

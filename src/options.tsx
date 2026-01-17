@@ -57,7 +57,7 @@ function OptionsPage() {
 
   // デフォルト画面（ダッシュボード）
   return (
-    <div className="min-h-screen bg-paper-grain">
+    <div className="min-h-screen bg-paper-ruled">
       <div className="max-w-4xl mx-auto py-8 px-4">
         <header className="mb-8">
           <div className="flex justify-between items-start">

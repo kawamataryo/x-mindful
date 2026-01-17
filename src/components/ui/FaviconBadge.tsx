@@ -21,12 +21,7 @@ function getFaviconUrl(siteUrl?: string): string | null {
   }
 }
 
-export function FaviconBadge({
-  siteUrl,
-  label,
-  size = "sm",
-  className = "",
-}: FaviconBadgeProps) {
+export function FaviconBadge({ siteUrl, label, size = "sm", className = "" }: FaviconBadgeProps) {
   const faviconUrl = getFaviconUrl(siteUrl);
   const fallbackChar = (label || siteUrl || "?").slice(0, 1).toUpperCase();
 
@@ -35,12 +30,7 @@ export function FaviconBadge({
       className={`${sizeClasses[size]} rounded-sm bg-paper-2 overflow-hidden flex items-center justify-center flex-shrink-0 ${className}`}
     >
       {faviconUrl ? (
-        <img
-          src={faviconUrl}
-          alt=""
-          className="w-full h-full object-cover"
-          loading="lazy"
-        />
+        <img src={faviconUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
       ) : (
         <span className="text-ink-muted font-medium">{fallbackChar}</span>
       )}

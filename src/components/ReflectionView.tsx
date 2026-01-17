@@ -8,8 +8,8 @@ export function ReflectionView() {
   const canSave = reflection.trim().length > 0 && !reflectionLoading;
 
   return (
-    <div className="min-h-screen bg-paper-grain flex items-center justify-center p-4">
-      <Surface variant="elevated" className="p-8 max-w-lg w-full">
+    <div className="min-h-screen bg-paper-ruled flex items-center justify-center p-4">
+      <Surface variant="elevated" className="p-8 max-w-lg w-full animate-fade-in-up">
         <div className="text-center mb-8">
           <h2 className="text-4xl font-bold text-ink mb-3">セッション終了</h2>
           <p className="text-lg text-ink-muted">この時間で何を得られましたか？</p>

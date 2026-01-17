@@ -132,7 +132,7 @@ export function SessionStartView() {
             onChange={handleCustomChange}
             placeholder="e.g. 15"
             disabled={startLoading}
-            className="w-full px-4 py-3 glass rounded-lg text-content placeholder-content-tertiary text-lg focus:outline-none focus-ring disabled:opacity-60"
+            className="w-full px-4 py-3 glass-input rounded-lg text-content placeholder-content-tertiary text-lg focus:outline-none focus-ring disabled:opacity-60"
           />
         </div>
 

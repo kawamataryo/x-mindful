@@ -32,7 +32,7 @@ export function ReflectionView() {
             placeholder="例: 新しい技術のトレンドを3つ発見できた"
             rows={5}
             disabled={reflectionLoading}
-            className="w-full px-4 py-3 glass rounded-lg text-content placeholder-content-tertiary text-base resize-none focus:outline-none focus-ring disabled:opacity-60"
+            className="w-full px-4 py-3 glass-input rounded-lg text-content placeholder-content-tertiary text-base resize-none focus:outline-none focus-ring disabled:opacity-60"
           />
           <p className="text-sm text-content-secondary mt-2">{reflection.trim().length} characters</p>
         </div>

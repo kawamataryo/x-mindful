@@ -15,8 +15,8 @@ const baseClasses =
 const variantClasses: Record<ButtonVariant, string> = {
   primary: "gradient-shimmer text-white shadow-md hover:shadow-lg hover-scale",
   secondary: "glass glass-hover text-content hover-scale",
-  quiet: "bg-transparent text-content-secondary hover:text-content hover:bg-white/30",
-  danger: "bg-danger text-white hover:opacity-90 shadow-md hover-scale",
+  quiet: "bg-transparent text-content-secondary hover:text-content hover:bg-white/40 transition-all duration-150",
+  danger: "bg-danger text-white hover:opacity-90 shadow-md hover-scale transition-opacity duration-150",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

@@ -27,12 +27,12 @@ export function FaviconBadge({ siteUrl, label, size = "sm", className = "" }: Fa
 
   return (
     <div
-      className={`${sizeClasses[size]} rounded-sm bg-paper-2 overflow-hidden flex items-center justify-center flex-shrink-0 ${className}`}
+      className={`${sizeClasses[size]} rounded-sm bg-base-subtle overflow-hidden flex items-center justify-center flex-shrink-0 ${className}`}
     >
       {faviconUrl ? (
         <img src={faviconUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
       ) : (
-        <span className="text-ink-muted font-medium">{fallbackChar}</span>
+        <span className="text-content-secondary font-medium">{fallbackChar}</span>
       )}
     </div>
   );

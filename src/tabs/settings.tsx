@@ -33,12 +33,12 @@ function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-paper-ruled">
+    <div className="min-h-screen bg-base">
       <div className="max-w-4xl mx-auto py-8 px-4">
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-4">
-              <Button onClick={handleBack} variant="quiet" size="sm" title="戻る" aria-label="戻る">
+              <Button onClick={handleBack} variant="quiet" size="sm" title="Back" aria-label="Go back">
                 <svg
                   className="w-5 h-5"
                   fill="none"
@@ -55,8 +55,8 @@ function SettingsPage() {
                 </svg>
               </Button>
               <div>
-                <h1 className="text-3xl font-bold text-ink">基本設定</h1>
-                <p className="text-ink-muted mt-2">対象サイトの利用制限に関する設定を行います</p>
+                <h1 className="text-3xl font-semibold text-content tracking-tight">Settings</h1>
+                <p className="text-content-secondary mt-2">サイトルールと時間制限を設定</p>
               </div>
             </div>
           </div>

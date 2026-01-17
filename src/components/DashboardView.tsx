@@ -30,11 +30,11 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
   return (
     <Surface variant="elevated" className="p-6 mb-6 animate-fade-in-up">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold text-ink">今日の利用状況</h2>
+        <h2 className="text-xl font-semibold text-content tracking-tight">Today's Usage</h2>
       </div>
 
       {siteStats.length === 0 ? (
-        <div className="text-center text-ink-muted py-8">表示できるサイトがありません</div>
+        <div className="text-center text-content-secondary py-8">サイトが設定されていません</div>
       ) : (
         <div className="space-y-4">
           {siteStats.map((stats) => (
@@ -43,7 +43,7 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
                 <div>
                   <div className="flex items-center gap-2">
                     <FaviconBadge siteUrl={stats.siteUrl} label={stats.label} size="sm" />
-                    <h3 className="text-lg font-semibold text-ink">{stats.label}</h3>
+                    <h3 className="text-lg font-semibold text-content">{stats.label}</h3>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -52,7 +52,7 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
                     variant="primary"
                     size="sm"
                   >
-                    セッションを開始
+                    Start Session
                   </Button>
                 </div>
               </div>
@@ -76,7 +76,7 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
 
       {/* セッション履歴 */}
       <div className="mt-6">
-        <h3 className="text-lg font-semibold text-ink mb-4">セッション履歴</h3>
+        <h3 className="text-lg font-semibold text-content mb-4">History</h3>
         <SessionHistory sessions={allSessions} />
       </div>
     </Surface>

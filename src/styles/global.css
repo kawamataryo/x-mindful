@@ -3,46 +3,44 @@
 @tailwind utilities;
 
 /* ============================================
-   Design Tokens — 静かな紙とインク
+   Design Tokens — Minimal Tech
    ============================================ */
 :root {
   color-scheme: light;
 
   /* ---- Colors ---- */
-  /* Paper (backgrounds) */
-  --paper: 252 250 245; /* warm off-white #fcfaf5 */
-  --paper-2: 245 242 235; /* slightly darker #f5f2eb */
-  --paper-3: 237 233 224; /* card border / subtle #ede9e0 */
+  /* Base (backgrounds) - cool gray scale */
+  --base: 250 250 252; /* pure white with hint of blue #fafafc */
+  --base-subtle: 245 246 250; /* very light cool gray #f5f6fa */
+  --base-muted: 235 237 242; /* card borders #ebeff2 */
 
-  /* Ink (text / icons) */
-  --ink: 45 42 38; /* warm charcoal #2d2a26 */
-  --ink-muted: 120 115 105; /* secondary text #787369 */
-  --ink-faint: 180 175 165; /* placeholders #b4afa5 */
+  /* Text */
+  --text: 20 22 28; /* near black #14161c */
+  --text-secondary: 100 105 120; /* #646978 */
+  --text-tertiary: 160 165 175; /* #a0a5af */
 
-  /* Accents */
-  --accent: 59 100 140; /* muted teal-blue #3b648c */
-  --accent-hover: 45 80 115; /* darker on hover #2d5073 */
-  --success: 60 120 80; /* muted green #3c7850 */
-  --danger: 175 70 60; /* muted red #af463c */
+  /* Accent - electric blue (iOS style) */
+  --accent: 0 122 255; /* #007aff */
+  --accent-hover: 0 100 220; /* #0064dc */
 
-  /* ---- Shadows ---- */
-  --shadow-sm: 0 1px 2px rgba(45, 42, 38, 0.06);
-  --shadow-md: 0 4px 12px rgba(45, 42, 38, 0.08);
-  --shadow-lg: 0 8px 24px rgba(45, 42, 38, 0.12);
+  /* Semantic */
+  --success: 52 199 89; /* iOS green #34c759 */
+  --warning: 255 149 0; /* iOS orange #ff9500 */
+  --danger: 255 59 48; /* iOS red #ff3b30 */
 
-  /* ---- Radii ---- */
+  /* ---- Shadows - very subtle ---- */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+  /* ---- Radii - sharp ---- */
   --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
 
   /* ---- Focus ring ---- */
-  --focus-ring: 0 0 0 2px rgb(var(--paper)), 0 0 0 4px rgb(var(--accent));
-
-  /* ---- Texture ---- */
-  --grain-opacity: 0.03;
-  --ruled-line-spacing: 24px;
-  --ruled-line-opacity: 0.35;
+  --focus-ring: 0 0 0 2px rgb(var(--base)), 0 0 0 4px rgb(var(--accent));
 
   /* ---- Transitions ---- */
   --transition-fast: 150ms;
@@ -64,8 +62,10 @@
 
 /* ---- Base resets ---- */
 body {
-  background-color: rgb(var(--paper));
-  color: rgb(var(--ink));
+  background-color: rgb(var(--base));
+  color: rgb(var(--text));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* ---- Focus visible utility ---- */
@@ -74,39 +74,24 @@ body {
   box-shadow: var(--focus-ring);
 }
 
-/* ---- Paper grain background utility ---- */
-.bg-paper-grain {
-  background-color: rgb(var(--paper));
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-  background-blend-mode: overlay;
+/* ---- Clean background utility ---- */
+.bg-base {
+  background-color: rgb(var(--base));
 }
 
-/* ---- Paper ruled background (grain + horizontal lines) ---- */
-.bg-paper-ruled {
-  background-color: rgb(var(--paper));
-  background-image:
-    /* Grain texture */
-    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
-    /* Horizontal ruled lines */
-    repeating-linear-gradient(
-        to bottom,
-        transparent,
-        transparent calc(var(--ruled-line-spacing) - 1px),
-        rgb(var(--paper-3) / var(--ruled-line-opacity)) calc(var(--ruled-line-spacing) - 1px),
-        rgb(var(--paper-3) / var(--ruled-line-opacity)) var(--ruled-line-spacing)
-      );
-  background-blend-mode: overlay, normal;
+.bg-base-subtle {
+  background-color: rgb(var(--base-subtle));
 }
 
 /* ============================================
-   Animations — 控えめな動き
+   Animations — Subtle & Precise
    ============================================ */
 
 /* ---- Keyframes ---- */
 @keyframes fade-in-up {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
@@ -120,7 +105,7 @@ body {
     opacity: 1;
   }
   50% {
-    opacity: 0.6;
+    opacity: 0.5;
   }
 }
 
@@ -131,20 +116,20 @@ body {
 
 /* Staggered delays for lists */
 .animate-fade-in-up-1 {
-  animation-delay: 50ms;
+  animation-delay: 40ms;
 }
 .animate-fade-in-up-2 {
-  animation-delay: 100ms;
+  animation-delay: 80ms;
 }
 .animate-fade-in-up-3 {
-  animation-delay: 150ms;
+  animation-delay: 120ms;
 }
 .animate-fade-in-up-4 {
-  animation-delay: 200ms;
+  animation-delay: 160ms;
 }
 
 .animate-pulse-warning {
-  animation: pulse-warning 2s ease-in-out infinite;
+  animation: pulse-warning 1.5s ease-in-out infinite;
 }
 
 /* ---- Hover effects ---- */
@@ -155,7 +140,7 @@ body {
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
@@ -165,9 +150,9 @@ body {
 }
 
 .hover-scale:hover {
-  transform: scale(1.02);
+  transform: scale(1.01);
 }
 
 .hover-scale:active {
-  transform: scale(0.98);
+  transform: scale(0.99);
 }

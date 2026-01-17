@@ -11,7 +11,7 @@ export function SessionHistoryItem({ session }: SessionHistoryItemProps) {
   const isToday = session.date === new Date().toISOString().split("T")[0];
 
   return (
-    <Surface variant="inset" className="p-3 hover:bg-paper-3/50 transition-colors">
+    <Surface variant="inset" className="p-3 hover:bg-base-muted/50 transition-colors">
       <div className="flex justify-between items-center mb-1">
         <div className="flex items-center gap-2">
           <FaviconBadge
@@ -19,28 +19,30 @@ export function SessionHistoryItem({ session }: SessionHistoryItemProps) {
             label={session.siteLabel || session.siteId}
             size="sm"
           />
-          <span className="text-xs text-ink-muted">{session.siteLabel || session.siteId}</span>
-          <span className="text-xs text-ink-faint">
+          <span className="text-xs text-content-secondary">
+            {session.siteLabel || session.siteId}
+          </span>
+          <span className="text-xs text-content-tertiary">
             {isToday
-              ? "今日"
+              ? "Today"
               : sessionDate.toLocaleDateString("ja-JP", {
                   month: "short",
                   day: "numeric",
                 })}
           </span>
-          <span className="text-sm text-ink">
+          <span className="text-sm text-content">
             {sessionDate.toLocaleTimeString("ja-JP", {
               hour: "2-digit",
               minute: "2-digit",
             })}
           </span>
-          <span className="text-xs text-ink-faint">({session.durationMinutes}分)</span>
+          <span className="text-xs text-content-tertiary">({session.durationMinutes}min)</span>
         </div>
       </div>
       {session.reflection && (
         <div className="relative group mt-2">
-          <div className="bg-white rounded-md border border-paper-3 p-3 pr-10">
-            <p className="text-sm text-ink whitespace-pre-wrap">{session.reflection}</p>
+          <div className="bg-white rounded-md border border-base-muted p-3 pr-10">
+            <p className="text-sm text-content whitespace-pre-wrap">{session.reflection}</p>
           </div>
           <CopyButton text={session.reflection} />
         </div>

@@ -5,21 +5,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        paper: {
-          DEFAULT: "rgb(var(--paper) / <alpha-value>)",
-          2: "rgb(var(--paper-2) / <alpha-value>)",
-          3: "rgb(var(--paper-3) / <alpha-value>)",
+        base: {
+          DEFAULT: "rgb(var(--base) / <alpha-value>)",
+          subtle: "rgb(var(--base-subtle) / <alpha-value>)",
+          muted: "rgb(var(--base-muted) / <alpha-value>)",
         },
-        ink: {
-          DEFAULT: "rgb(var(--ink) / <alpha-value>)",
-          muted: "rgb(var(--ink-muted) / <alpha-value>)",
-          faint: "rgb(var(--ink-faint) / <alpha-value>)",
+        content: {
+          DEFAULT: "rgb(var(--text) / <alpha-value>)",
+          secondary: "rgb(var(--text-secondary) / <alpha-value>)",
+          tertiary: "rgb(var(--text-tertiary) / <alpha-value>)",
         },
         accent: {
           DEFAULT: "rgb(var(--accent) / <alpha-value>)",
           hover: "rgb(var(--accent-hover) / <alpha-value>)",
         },
         success: "rgb(var(--success) / <alpha-value>)",
+        warning: "rgb(var(--warning) / <alpha-value>)",
         danger: "rgb(var(--danger) / <alpha-value>)",
       },
       boxShadow: {

@@ -38,17 +38,17 @@ function Popup() {
   };
 
   return (
-    <div className="w-96 min-h-[400px] bg-paper-ruled">
+    <div className="w-96 min-h-[400px] bg-base">
       <div className="p-4">
         <header className="mb-4">
-          <h1 className="text-xl font-bold text-ink">サイト利用制限</h1>
-          <p className="text-sm text-ink-muted mt-1">今日の利用状況</p>
+          <h1 className="text-xl font-semibold text-content tracking-tight">Site Limiter</h1>
+          <p className="text-sm text-content-secondary mt-1">Today's Usage</p>
         </header>
 
         {dashboardLoading ? (
-          <div className="text-center text-ink-muted py-6">読み込み中...</div>
+          <div className="text-center text-content-secondary py-6">Loading...</div>
         ) : siteStats.length === 0 ? (
-          <div className="text-center text-ink-muted py-6">表示できるサイトがありません</div>
+          <div className="text-center text-content-secondary py-6">サイトが設定されていません</div>
         ) : (
           <div className="space-y-2">
             {siteStats.map((stats, index) => {
@@ -62,12 +62,12 @@ function Popup() {
                 >
                   <div className="flex items-center gap-2">
                     <FaviconBadge siteUrl={stats.siteUrl} label={stats.label} size="sm" />
-                    <span className="text-sm text-ink">{stats.label}</span>
+                    <span className="text-sm text-content">{stats.label}</span>
                   </div>
                   <span
                     className={`text-sm font-semibold ${isLow ? "text-danger animate-pulse-warning" : "text-accent"}`}
                   >
-                    残り {stats.remainingMinutes}分
+                    {stats.remainingMinutes}min
                   </span>
                 </Surface>
               );
@@ -91,7 +91,7 @@ function Popup() {
                 d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
               />
             </svg>
-            ダッシュボードを開く
+            Dashboard
           </Button>
 
           <Button onClick={handleOpenSettings} variant="secondary" className="w-full">
@@ -115,7 +115,7 @@ function Popup() {
                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
               />
             </svg>
-            設定を開く
+            Settings
           </Button>
         </div>
       </div>

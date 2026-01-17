@@ -22,20 +22,20 @@ const formatDate = (dateStr: string): string => {
   return `${Number(m)}/${Number(d)}`;
 };
 
-// Paper & ink palette: muted, cohesive colors
+// Minimal tech palette: clean, vibrant colors
 const palette = [
-  "rgba(59, 100, 140, 0.75)", // accent blue
-  "rgba(60, 120, 80, 0.75)", // muted green
-  "rgba(175, 100, 60, 0.75)", // warm terracotta
-  "rgba(120, 90, 140, 0.75)", // muted purple
-  "rgba(160, 130, 60, 0.75)", // olive/mustard
-  "rgba(140, 80, 100, 0.75)", // dusty rose
-  "rgba(80, 130, 130, 0.75)", // teal
+  "rgba(0, 122, 255, 0.75)", // iOS blue
+  "rgba(52, 199, 89, 0.75)", // iOS green
+  "rgba(255, 149, 0, 0.75)", // iOS orange
+  "rgba(175, 82, 222, 0.75)", // iOS purple
+  "rgba(255, 59, 48, 0.75)", // iOS red
+  "rgba(90, 200, 250, 0.75)", // iOS cyan
+  "rgba(255, 204, 0, 0.75)", // iOS yellow
 ];
 
 export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChartProps) {
   if (dailyUsageHistory.length === 0 || siteRules.length === 0) {
-    return <div className="text-center text-ink-muted py-8">データがありません</div>;
+    return <div className="text-center text-content-secondary py-8">No data available</div>;
   }
 
   const reversed = [...dailyUsageHistory].reverse();
@@ -46,7 +46,7 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
     label: rule.label,
     data: reversed.map((usage) => usage.siteUsage[rule.id]?.totalUsedMinutes || 0),
     backgroundColor: palette[index % palette.length],
-    borderRadius: 4,
+    borderRadius: 3,
   }));
 
   const allValues = datasets.flatMap((dataset) => dataset.data as number[]);
@@ -67,32 +67,32 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
       legend: {
         position: "bottom" as const,
         labels: {
-          color: "rgb(120, 115, 105)", // ink-muted
+          color: "rgb(100, 105, 120)", // text-secondary
         },
       },
       tooltip: {
         callbacks: {
-          label: (context: any) => `${context.dataset.label}: ${context.parsed.y}分`,
+          label: (context: any) => `${context.dataset.label}: ${context.parsed.y}min`,
         },
       },
     },
     scales: {
       x: {
         ticks: {
-          color: "rgb(120, 115, 105)",
+          color: "rgb(100, 105, 120)",
         },
         grid: {
-          color: "rgba(237, 233, 224, 0.8)", // paper-3
+          color: "rgba(235, 239, 242, 0.8)", // base-muted
         },
       },
       y: {
         beginAtZero: true,
         ticks: {
-          callback: (value: any) => `${value}分`,
-          color: "rgb(120, 115, 105)",
+          callback: (value: any) => `${value}min`,
+          color: "rgb(100, 105, 120)",
         },
         grid: {
-          color: "rgba(237, 233, 224, 0.8)",
+          color: "rgba(235, 239, 242, 0.8)",
         },
       },
     },
@@ -100,12 +100,12 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
 
   return (
     <div className="w-full">
-      <h3 className="text-lg font-semibold text-ink mb-4">日別利用時間グラフ（直近30日）</h3>
+      <h3 className="text-lg font-semibold text-content mb-4">Daily Usage (Last 30 Days)</h3>
       <Surface variant="inset" className="p-4">
         <div className="h-[220px]">
           <Bar data={chartData} options={options} />
         </div>
-        <div className="mt-3 text-xs text-ink-muted text-right">平均: {average}分/日</div>
+        <div className="mt-3 text-xs text-content-secondary text-right">Avg: {average}min/day</div>
       </Surface>
     </div>
   );

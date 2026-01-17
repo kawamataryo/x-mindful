@@ -57,22 +57,22 @@ function OptionsPage() {
 
   // デフォルト画面（ダッシュボード）
   return (
-    <div className="min-h-screen bg-paper-ruled">
+    <div className="min-h-screen bg-base">
       <div className="max-w-4xl mx-auto py-8 px-4">
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-ink">サイト利用制限</h1>
-              <p className="text-ink-muted mt-2">
-                対象サイトの利用を制限し、意図的な行動をサポートします
+              <h1 className="text-3xl font-semibold text-content tracking-tight">Site Limiter</h1>
+              <p className="text-content-secondary mt-2">
+                サイトの利用時間を管理して、意図的な行動をサポート
               </p>
             </div>
             <Button
               onClick={handleOpenSettings}
               variant="quiet"
               size="sm"
-              title="設定"
-              aria-label="設定を開く"
+              title="Settings"
+              aria-label="Open settings"
             >
               <svg
                 className="w-5 h-5"

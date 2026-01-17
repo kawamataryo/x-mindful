@@ -8,15 +8,15 @@ export function ReflectionView() {
   const canSave = reflection.trim().length > 0 && !reflectionLoading;
 
   return (
-    <div className="min-h-screen bg-paper-ruled flex items-center justify-center p-4">
+    <div className="min-h-screen bg-base flex items-center justify-center p-4">
       <Surface variant="elevated" className="p-8 max-w-lg w-full animate-fade-in-up">
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-ink mb-3">セッション終了</h2>
-          <p className="text-lg text-ink-muted">この時間で何を得られましたか？</p>
+          <h2 className="text-4xl font-semibold text-content mb-3 tracking-tight">Session Complete</h2>
+          <p className="text-lg text-content-secondary">この時間で何を得られましたか？</p>
         </div>
 
         <div className="mb-6">
-          <label className="block mb-3 font-semibold text-ink">振り返り（必須）</label>
+          <label className="block mb-3 font-semibold text-content">Reflection</label>
           <textarea
             value={reflection}
             onChange={(e) => setReflection(e.target.value)}
@@ -30,9 +30,9 @@ export function ReflectionView() {
             placeholder="例: 新しい技術のトレンドを3つ発見できた"
             rows={5}
             disabled={reflectionLoading}
-            className="w-full px-4 py-3 border border-paper-3 rounded-lg bg-white text-ink placeholder-ink-faint text-base resize-none focus:outline-none focus-ring disabled:bg-paper-2"
+            className="w-full px-4 py-3 border border-base-muted rounded-md bg-white text-content placeholder-content-tertiary text-base resize-none focus:outline-none focus-ring disabled:bg-base-subtle"
           />
-          <p className="text-sm text-ink-muted mt-2">{reflection.trim().length}文字</p>
+          <p className="text-sm text-content-secondary mt-2">{reflection.trim().length} characters</p>
         </div>
 
         {reflectionError && (
@@ -46,10 +46,10 @@ export function ReflectionView() {
           size="lg"
           className="w-full"
         >
-          {reflectionLoading ? "保存中..." : "保存して終了"}
+          {reflectionLoading ? "Saving..." : "Save & Finish"}
         </Button>
 
-        <p className="text-sm text-ink-muted text-center mt-4">
+        <p className="text-sm text-content-secondary text-center mt-4">
           振り返りを入力するまで、対象サイトにアクセスできません
         </p>
       </Surface>

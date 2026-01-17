@@ -19,8 +19,8 @@ export function SessionHistory({ sessions }: SessionHistoryProps) {
 
   if (sessions.length === 0) {
     return (
-      <div className="text-center py-8 text-ink-muted">
-        <p>まだセッションがありません</p>
+      <div className="text-center py-8 text-content-secondary">
+        <p>No sessions yet</p>
         <p className="text-sm mt-2">セッションを開始して、意図的な利用を始めましょう</p>
       </div>
     );
@@ -43,9 +43,9 @@ export function SessionHistory({ sessions }: SessionHistoryProps) {
             variant="secondary"
             size="sm"
           >
-            前へ
+            Prev
           </Button>
-          <span className="text-sm text-ink-muted">
+          <span className="text-sm text-content-secondary">
             {currentPage} / {totalPages}
           </span>
           <Button
@@ -54,7 +54,7 @@ export function SessionHistory({ sessions }: SessionHistoryProps) {
             variant="secondary"
             size="sm"
           >
-            次へ
+            Next
           </Button>
         </div>
       )}

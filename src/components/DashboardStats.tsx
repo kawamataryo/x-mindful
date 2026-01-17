@@ -17,7 +17,9 @@ export function DashboardStats({
 }: DashboardStatsProps) {
   if (loading) {
     return (
-      <div className={`text-center text-ink-muted ${compact ? "py-4" : "py-8"}`}>読み込み中...</div>
+      <div className={`text-center text-content-secondary ${compact ? "py-4" : "py-8"}`}>
+        Loading...
+      </div>
     );
   }
 
@@ -33,37 +35,35 @@ export function DashboardStats({
     <div className={`${gridClass} ${marginBottom}`}>
       {/* 残り時間カード */}
       <div
-        className={`bg-white rounded-md ${cardPadding} border border-paper-3 ${isLow ? "border-danger/30" : ""}`}
+        className={`bg-white rounded-md ${cardPadding} border border-base-muted ${isLow ? "border-danger/30" : ""}`}
       >
-        <h3 className="text-sm font-medium text-ink-muted mb-1">残り利用可能時間</h3>
+        <h3 className="text-sm font-medium text-content-secondary mb-1">Time Remaining</h3>
         <p
           className={`text-2xl font-bold ${isLow ? "text-danger animate-pulse-warning" : "text-accent"}`}
         >
-          {remainingMinutes}分
+          {remainingMinutes}min
         </p>
-        <p className="text-xs text-ink-faint mt-1">上限: {dailyLimitMinutes}分</p>
+        <p className="text-xs text-content-tertiary mt-1">Limit: {dailyLimitMinutes}min</p>
       </div>
 
       {/* 今日の利用時間カード */}
-      <div className={`bg-white rounded-md ${cardPadding} border border-paper-3`}>
-        <h3 className="text-sm font-medium text-ink-muted mb-1">今日の利用時間</h3>
-        <p className="text-2xl font-bold text-success">{usedMinutes}分</p>
-        <p className="text-xs text-ink-faint mt-1">
+      <div className={`bg-white rounded-md ${cardPadding} border border-base-muted`}>
+        <h3 className="text-sm font-medium text-content-secondary mb-1">Time Used</h3>
+        <p className="text-2xl font-bold text-success">{usedMinutes}min</p>
+        <p className="text-xs text-content-tertiary mt-1">
           {dailyLimitMinutes > 0
-            ? `${Math.round((usedMinutes / dailyLimitMinutes) * 100)}% 使用`
-            : "0% 使用"}
+            ? `${Math.round((usedMinutes / dailyLimitMinutes) * 100)}% used`
+            : "0% used"}
         </p>
       </div>
 
       {/* セッション数カード */}
-      <div className={`bg-white rounded-md ${cardPadding} border border-paper-3`}>
-        <h3 className="text-sm font-medium text-ink-muted mb-1">今日のセッション数</h3>
-        <p className="text-2xl font-bold text-ink">{sessionCount}回</p>
-        <p className="text-xs text-ink-faint mt-1">
-          平均:{" "}
-          {sessionCount > 0
-            ? `${Math.round(usedMinutes / sessionCount)}分/セッション`
-            : "0分/セッション"}
+      <div className={`bg-white rounded-md ${cardPadding} border border-base-muted`}>
+        <h3 className="text-sm font-medium text-content-secondary mb-1">Sessions</h3>
+        <p className="text-2xl font-bold text-content">{sessionCount}</p>
+        <p className="text-xs text-content-tertiary mt-1">
+          Avg:{" "}
+          {sessionCount > 0 ? `${Math.round(usedMinutes / sessionCount)}min/session` : "0min"}
         </p>
       </div>
     </div>

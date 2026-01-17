@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { DashboardView } from "~components/DashboardView";
 import { SessionStartView } from "~components/SessionStartView";
 import { ReflectionView } from "~components/ReflectionView";
+import { Button } from "~components/ui";
 import { useSettings } from "~hooks/useSettings";
 import "~styles/global.css";
 
@@ -56,24 +57,25 @@ function OptionsPage() {
 
   // デフォルト画面（ダッシュボード）
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-6xl mx-auto py-8 px-4">
+    <div className="min-h-screen bg-paper-grain">
+      <div className="max-w-4xl mx-auto py-8 px-4">
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">サイト利用制限 設定</h1>
-              <p className="text-gray-600 mt-2">
+              <h1 className="text-3xl font-bold text-ink">サイト利用制限</h1>
+              <p className="text-ink-muted mt-2">
                 対象サイトの利用を制限し、意図的な行動をサポートします
               </p>
             </div>
-            <button
+            <Button
               onClick={handleOpenSettings}
-              className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+              variant="quiet"
+              size="sm"
               title="設定"
               aria-label="設定を開く"
             >
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -92,7 +94,7 @@ function OptionsPage() {
                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
                 />
               </svg>
-            </button>
+            </Button>
           </div>
         </header>
 

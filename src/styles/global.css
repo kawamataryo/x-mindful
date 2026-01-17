@@ -2,13 +2,74 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Ensure native form controls (input, select, etc.) render in light mode by default.
-   This prevents black form controls on some Chrome/OS combinations for extension pages. */
+/* ============================================
+   Design Tokens — 静かな紙とインク
+   ============================================ */
 :root {
   color-scheme: light;
+
+  /* ---- Colors ---- */
+  /* Paper (backgrounds) */
+  --paper: 252 250 245;          /* warm off-white #fcfaf5 */
+  --paper-2: 245 242 235;        /* slightly darker #f5f2eb */
+  --paper-3: 237 233 224;        /* card border / subtle #ede9e0 */
+
+  /* Ink (text / icons) */
+  --ink: 45 42 38;               /* warm charcoal #2d2a26 */
+  --ink-muted: 120 115 105;      /* secondary text #787369 */
+  --ink-faint: 180 175 165;      /* placeholders #b4afa5 */
+
+  /* Accents */
+  --accent: 59 100 140;          /* muted teal-blue #3b648c */
+  --accent-hover: 45 80 115;     /* darker on hover #2d5073 */
+  --success: 60 120 80;          /* muted green #3c7850 */
+  --danger: 175 70 60;           /* muted red #af463c */
+
+  /* ---- Shadows ---- */
+  --shadow-sm: 0 1px 2px rgba(45, 42, 38, 0.06);
+  --shadow-md: 0 4px 12px rgba(45, 42, 38, 0.08);
+  --shadow-lg: 0 8px 24px rgba(45, 42, 38, 0.12);
+
+  /* ---- Radii ---- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* ---- Focus ring ---- */
+  --focus-ring: 0 0 0 2px rgb(var(--paper)), 0 0 0 4px rgb(var(--accent));
+
+  /* ---- Grain overlay (optional texture) ---- */
+  --grain-opacity: 0.03;
 }
 
-/* If we ever enable Tailwind's dark mode via `.dark`, let native controls follow it. */
-.dark {
-  color-scheme: dark;
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---- Base resets ---- */
+body {
+  background-color: rgb(var(--paper));
+  color: rgb(var(--ink));
+}
+
+/* ---- Focus visible utility ---- */
+.focus-ring:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+/* ---- Paper grain background utility ---- */
+.bg-paper-grain {
+  background-color: rgb(var(--paper));
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-blend-mode: overlay;
 }

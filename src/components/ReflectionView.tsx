@@ -1,4 +1,5 @@
 import { useReflection } from "~hooks/useReflection";
+import { Button, Surface } from "~components/ui";
 
 export function ReflectionView() {
   const { reflection, setReflection, reflectionLoading, reflectionError, handleSaveReflection } =
@@ -7,15 +8,15 @@ export function ReflectionView() {
   const canSave = reflection.trim().length > 0 && !reflectionLoading;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-pink-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl p-8 max-w-lg w-full shadow-2xl">
+    <div className="min-h-screen bg-paper-grain flex items-center justify-center p-4">
+      <Surface variant="elevated" className="p-8 max-w-lg w-full">
         <div className="text-center mb-8">
-          <h2 className="text-4xl font-bold text-gray-800 mb-3">セッション終了</h2>
-          <p className="text-lg text-gray-600">この時間で何を得られましたか？</p>
+          <h2 className="text-4xl font-bold text-ink mb-3">セッション終了</h2>
+          <p className="text-lg text-ink-muted">この時間で何を得られましたか？</p>
         </div>
 
         <div className="mb-6">
-          <label className="block mb-3 font-semibold text-gray-700">振り返り（必須）</label>
+          <label className="block mb-3 font-semibold text-ink">振り返り（必須）</label>
           <textarea
             value={reflection}
             onChange={(e) => setReflection(e.target.value)}
@@ -29,31 +30,29 @@ export function ReflectionView() {
             placeholder="例: 新しい技術のトレンドを3つ発見できた"
             rows={5}
             disabled={reflectionLoading}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl bg-white text-gray-900 placeholder-gray-400 text-base resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100"
+            className="w-full px-4 py-3 border border-paper-3 rounded-lg bg-white text-ink placeholder-ink-faint text-base resize-none focus:outline-none focus-ring disabled:bg-paper-2"
           />
-          <p className="text-sm text-gray-500 mt-2">{reflection.trim().length}文字</p>
+          <p className="text-sm text-ink-muted mt-2">{reflection.trim().length}文字</p>
         </div>
 
         {reflectionError && (
-          <p className="text-red-600 mb-4 text-sm text-center font-medium">{reflectionError}</p>
+          <p className="text-danger mb-4 text-sm text-center font-medium">{reflectionError}</p>
         )}
 
-        <button
+        <Button
           onClick={handleSaveReflection}
           disabled={!canSave}
-          className={`w-full px-4 py-4 text-white border-none rounded-xl text-lg font-bold transition-all ${
-            canSave
-              ? "bg-purple-500 hover:bg-purple-600 cursor-pointer shadow-lg hover:shadow-xl"
-              : "bg-gray-400 cursor-not-allowed"
-          }`}
+          variant="primary"
+          size="lg"
+          className="w-full"
         >
           {reflectionLoading ? "保存中..." : "保存して終了"}
-        </button>
+        </Button>
 
-        <p className="text-sm text-gray-500 text-center mt-4">
+        <p className="text-sm text-ink-muted text-center mt-4">
           振り返りを入力するまで、対象サイトにアクセスできません
         </p>
-      </div>
+      </Surface>
     </div>
   );
 }

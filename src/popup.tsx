@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useSettings } from "~hooks/useSettings";
 import { useDashboard } from "~hooks/useDashboard";
+import { FaviconBadge, Button, Surface } from "~components/ui";
 import "~styles/global.css";
 
 function Popup() {
@@ -36,61 +37,43 @@ function Popup() {
     });
   };
 
-  const getFaviconUrl = (siteUrl?: string) => {
-    if (!siteUrl) return null;
-    try {
-      const host = new URL(siteUrl).hostname;
-      return `https://www.google.com/s2/favicons?domain=${host}&sz=64`;
-    } catch {
-      return null;
-    }
-  };
-
   return (
-    <div className="w-96 min-h-[400px] bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="w-96 min-h-[400px] bg-paper-grain">
       <div className="p-4">
         <header className="mb-4">
-          <h1 className="text-xl font-bold text-gray-800">サイト利用制限</h1>
-          <p className="text-sm text-gray-600 mt-1">今日の利用状況</p>
+          <h1 className="text-xl font-bold text-ink">サイト利用制限</h1>
+          <p className="text-sm text-ink-muted mt-1">今日の利用状況</p>
         </header>
 
         {dashboardLoading ? (
-          <div className="text-center text-gray-500 py-6">読み込み中...</div>
+          <div className="text-center text-ink-muted py-6">読み込み中...</div>
         ) : siteStats.length === 0 ? (
-          <div className="text-center text-gray-500 py-6">表示できるサイトがありません</div>
+          <div className="text-center text-ink-muted py-6">表示できるサイトがありません</div>
         ) : (
           <div className="space-y-2">
             {siteStats.map((stats) => {
-              const faviconUrl = getFaviconUrl(stats.siteUrl);
+              const isLow = stats.remainingMinutes <= 5;
               return (
-                <div
+                <Surface
                   key={stats.siteId}
-                  className="flex items-center justify-between gap-3 rounded-lg border border-gray-200 bg-white px-3 py-2"
+                  variant="card"
+                  className="flex items-center justify-between gap-3 px-3 py-2"
                 >
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 bg-gray-200 overflow-hidden flex items-center justify-center">
-                      {faviconUrl ? (
-                        <img src={faviconUrl} alt="" className="w-4 h-4" />
-                      ) : (
-                        <span className="text-[10px] text-gray-500">{stats.label.slice(0, 1)}</span>
-                      )}
-                    </div>
-                    <span className="text-sm text-gray-800">{stats.label}</span>
+                    <FaviconBadge siteUrl={stats.siteUrl} label={stats.label} size="sm" />
+                    <span className="text-sm text-ink">{stats.label}</span>
                   </div>
-                  <span className="text-sm font-semibold text-blue-600">
-                    {stats.usedMinutes}分 / {stats.dailyLimitMinutes}分
+                  <span className={`text-sm font-semibold ${isLow ? "text-danger" : "text-accent"}`}>
+                    残り {stats.remainingMinutes}分
                   </span>
-                </div>
+                </Surface>
               );
             })}
           </div>
         )}
 
         <div className="mt-6 flex flex-col gap-3">
-          <button
-            onClick={handleOpenDashboard}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium flex items-center justify-center gap-2"
-          >
+          <Button onClick={handleOpenDashboard} variant="primary" className="w-full">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -106,12 +89,9 @@ function Popup() {
               />
             </svg>
             ダッシュボードを開く
-          </button>
+          </Button>
 
-          <button
-            onClick={handleOpenSettings}
-            className="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium flex items-center justify-center gap-2"
-          >
+          <Button onClick={handleOpenSettings} variant="secondary" className="w-full">
             <svg
               className="w-5 h-5"
               fill="none"
@@ -133,7 +113,7 @@ function Popup() {
               />
             </svg>
             設定を開く
-          </button>
+          </Button>
         </div>
       </div>
     </div>

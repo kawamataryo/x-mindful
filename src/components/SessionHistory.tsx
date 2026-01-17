@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { SessionHistoryItem } from "./SessionHistoryItem";
+import { Button } from "~components/ui";
 import type { SessionRecordWithDate } from "~hooks/useDashboard";
 
 interface SessionHistoryProps {
@@ -18,7 +19,7 @@ export function SessionHistory({ sessions }: SessionHistoryProps) {
 
   if (sessions.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-ink-muted">
         <p>まだセッションがありません</p>
         <p className="text-sm mt-2">セッションを開始して、意図的な利用を始めましょう</p>
       </div>
@@ -36,31 +37,25 @@ export function SessionHistory({ sessions }: SessionHistoryProps) {
       {/* ページネーション */}
       {totalPages > 1 && (
         <div className="flex justify-center items-center gap-2 mt-4">
-          <button
+          <Button
             onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
             disabled={currentPage === 1}
-            className={`px-3 py-1 rounded text-sm ${
-              currentPage === 1
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            variant="secondary"
+            size="sm"
           >
             前へ
-          </button>
-          <span className="text-sm text-gray-600">
+          </Button>
+          <span className="text-sm text-ink-muted">
             {currentPage} / {totalPages}
           </span>
-          <button
+          <Button
             onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
             disabled={currentPage === totalPages}
-            className={`px-3 py-1 rounded text-sm ${
-              currentPage === totalPages
-                ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-            }`}
+            variant="secondary"
+            size="sm"
           >
             次へ
-          </button>
+          </Button>
         </div>
       )}
     </>

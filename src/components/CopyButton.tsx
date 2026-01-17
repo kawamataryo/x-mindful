@@ -22,13 +22,13 @@ export function CopyButton({ text, className = "" }: CopyButtonProps) {
   return (
     <button
       onClick={handleCopy}
-      className={`absolute top-2 right-2 p-1.5 rounded hover:bg-gray-100 transition-colors group ${className}`}
+      className={`absolute top-2 right-2 p-1.5 rounded-sm hover:bg-paper-2 transition-colors group focus-ring ${className}`}
       title={copied ? "コピーしました" : "クリックでコピー"}
-      aria-label="コピー"
+      aria-label={copied ? "コピーしました" : "コピー"}
     >
       {copied ? (
         <svg
-          className="w-4 h-4 text-green-600"
+          className="w-4 h-4 text-success"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -38,7 +38,7 @@ export function CopyButton({ text, className = "" }: CopyButtonProps) {
         </svg>
       ) : (
         <svg
-          className="w-4 h-4 text-gray-500 group-hover:text-gray-700"
+          className="w-4 h-4 text-ink-muted group-hover:text-ink"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

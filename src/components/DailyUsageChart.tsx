@@ -7,6 +7,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { Surface } from "~components/ui";
 import type { DailyUsage, SiteRule } from "~lib/types";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -21,19 +22,20 @@ const formatDate = (dateStr: string): string => {
   return `${Number(m)}/${Number(d)}`;
 };
 
+// Paper & ink palette: muted, cohesive colors
 const palette = [
-  "rgba(59, 130, 246, 0.6)",
-  "rgba(16, 185, 129, 0.6)",
-  "rgba(249, 115, 22, 0.6)",
-  "rgba(139, 92, 246, 0.6)",
-  "rgba(234, 179, 8, 0.6)",
-  "rgba(236, 72, 153, 0.6)",
-  "rgba(20, 184, 166, 0.6)",
+  "rgba(59, 100, 140, 0.75)",  // accent blue
+  "rgba(60, 120, 80, 0.75)",   // muted green
+  "rgba(175, 100, 60, 0.75)",  // warm terracotta
+  "rgba(120, 90, 140, 0.75)",  // muted purple
+  "rgba(160, 130, 60, 0.75)",  // olive/mustard
+  "rgba(140, 80, 100, 0.75)",  // dusty rose
+  "rgba(80, 130, 130, 0.75)",  // teal
 ];
 
 export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChartProps) {
   if (dailyUsageHistory.length === 0 || siteRules.length === 0) {
-    return <div className="text-center text-gray-500 py-8">データがありません</div>;
+    return <div className="text-center text-ink-muted py-8">データがありません</div>;
   }
 
   const reversed = [...dailyUsageHistory].reverse();
@@ -64,6 +66,9 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
     plugins: {
       legend: {
         position: "bottom" as const,
+        labels: {
+          color: "rgb(120, 115, 105)", // ink-muted
+        },
       },
       tooltip: {
         callbacks: {
@@ -72,10 +77,22 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
       },
     },
     scales: {
+      x: {
+        ticks: {
+          color: "rgb(120, 115, 105)",
+        },
+        grid: {
+          color: "rgba(237, 233, 224, 0.8)", // paper-3
+        },
+      },
       y: {
         beginAtZero: true,
         ticks: {
           callback: (value: any) => `${value}分`,
+          color: "rgb(120, 115, 105)",
+        },
+        grid: {
+          color: "rgba(237, 233, 224, 0.8)",
         },
       },
     },
@@ -83,13 +100,13 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
 
   return (
     <div className="w-full">
-      <h3 className="text-lg font-semibold text-gray-800 mb-4">日別利用時間グラフ（直近30日）</h3>
-      <div className="bg-gray-50 rounded-lg p-4">
+      <h3 className="text-lg font-semibold text-ink mb-4">日別利用時間グラフ（直近30日）</h3>
+      <Surface variant="inset" className="p-4">
         <div className="h-[220px]">
           <Bar data={chartData} options={options} />
         </div>
-        <div className="mt-3 text-xs text-gray-500 text-right">平均: {average}分/日</div>
-      </div>
+        <div className="mt-3 text-xs text-ink-muted text-right">平均: {average}分/日</div>
+      </Surface>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { SettingsForm } from "~components/SettingsForm";
+import { Button } from "~components/ui";
 import { useSettings } from "~hooks/useSettings";
 import "~styles/global.css";
 
@@ -32,19 +33,20 @@ function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-6xl mx-auto py-8 px-4">
+    <div className="min-h-screen bg-paper-grain">
+      <div className="max-w-4xl mx-auto py-8 px-4">
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-4">
-              <button
+              <Button
                 onClick={handleBack}
-                className="p-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+                variant="quiet"
+                size="sm"
                 title="戻る"
                 aria-label="戻る"
               >
                 <svg
-                  className="w-6 h-6"
+                  className="w-5 h-5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -57,10 +59,10 @@ function SettingsPage() {
                     d="M15 19l-7-7 7-7"
                   />
                 </svg>
-              </button>
+              </Button>
               <div>
-                <h1 className="text-3xl font-bold text-gray-800">基本設定</h1>
-                <p className="text-gray-600 mt-2">対象サイトの利用制限に関する設定を行います</p>
+                <h1 className="text-3xl font-bold text-ink">基本設定</h1>
+                <p className="text-ink-muted mt-2">対象サイトの利用制限に関する設定を行います</p>
               </div>
             </div>
           </div>

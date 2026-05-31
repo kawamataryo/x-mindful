@@ -1,11 +1,8 @@
 import { useCallback, useMemo, useState } from "react";
-import { Storage } from "@plasmohq/storage";
 import { sendToBackground } from "@plasmohq/messaging";
-import { getRemainingMinutes, getSettings } from "~lib/storage";
+import { getCurrentSession, getRemainingMinutes, getSettings } from "~lib/storage";
 import { matchSiteRule } from "~lib/url-matcher";
 import type { Session, SiteRule } from "~lib/types";
-
-const storage = new Storage();
 
 export function useSessionStart() {
   const [remainingMinutes, setRemainingMinutes] = useState(0);
@@ -40,7 +37,7 @@ export function useSessionStart() {
       setPresets(currentSettings.presetMinutes);
       setSiteRules(currentSettings.siteRules);
 
-      const currentSession = await storage.get<Session>("currentSession");
+      const currentSession = await getCurrentSession();
       setActiveSession(currentSession && currentSession.isActive ? currentSession : null);
 
       const params = new URLSearchParams(window.location.search);
@@ -117,7 +114,7 @@ export function useSessionStart() {
   const handleStartSession = useCallback(
     async (minutesParam?: number) => {
       // 既にアクティブなセッションがある場合は再開扱いにする
-      const currentSession = await storage.get<Session>("currentSession");
+      const currentSession = await getCurrentSession();
       if (currentSession && currentSession.isActive && currentSession.remainingSeconds > 0) {
         const redirectUrl = getRedirectUrl(currentSession.siteId, currentSession.siteUrl);
         if (redirectUrl) {

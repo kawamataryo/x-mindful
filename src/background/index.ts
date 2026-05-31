@@ -7,7 +7,8 @@ import {
 } from "~lib/storage";
 import { updateSessionRemainingTime, isSessionExpired, isSessionToday } from "~lib/timer";
 import { matchSiteRule } from "~lib/url-matcher";
-import { getToday, isSession } from "~lib/types";
+import { getToday, isSession, STORAGE_KEYS } from "~lib/types";
+import { buildReflectionUrl, buildStartSessionUrl } from "~lib/extension-urls";
 
 // タイマーインターバルID
 let timerInterval: NodeJS.Timeout | null = null;
@@ -90,7 +91,7 @@ function stopTimer() {
 async function redirectTabsToReflection(siteId: string) {
   try {
     const tabs = await chrome.tabs.query({});
-    const reflectionUrl = chrome.runtime.getURL("options.html?view=reflection");
+    const reflectionUrl = buildReflectionUrl();
     const settings = await getSettings();
 
     for (const tab of tabs) {
@@ -110,14 +111,33 @@ async function redirectTabsToReflection(siteId: string) {
   }
 }
 
-function buildStartSessionUrl(siteId: string, returnUrl?: string): string {
-  const params = new URLSearchParams();
-  params.set("view", "start-session");
-  params.set("siteId", siteId);
-  if (returnUrl) {
-    params.set("returnUrl", returnUrl);
+async function redirectMatchedTabsToStartSession() {
+  const tabs = await chrome.tabs.query({});
+  const settings = await getSettings();
+
+  for (const tab of tabs) {
+    if (!tab.id || !tab.url) {
+      continue;
+    }
+
+    const matchedRule = matchSiteRule(tab.url, settings.siteRules, settings.globalExcludePatterns);
+    if (matchedRule) {
+      await chrome.tabs.update(tab.id, {
+        url: buildStartSessionUrl(matchedRule.id, tab.url),
+      });
+    }
   }
-  return chrome.runtime.getURL(`options.html?${params.toString()}`);
+}
+
+async function resetCurrentSessionAndRedirectMatchedTabs() {
+  const session = await getCurrentSession();
+  if (!session) {
+    return;
+  }
+
+  await saveCurrentSession(null);
+  stopTimer();
+  await redirectMatchedTabsToStartSession();
 }
 
 type TabUpdateHandler = Parameters<typeof chrome.tabs.onUpdated.addListener>[0];
@@ -209,31 +229,7 @@ async function restoreState() {
 async function resetAtMidnightLocal() {
   console.log("[Site Blocker] Resetting at midnight (local TZ)");
 
-  // セッションをリセット
-  const session = await getCurrentSession();
-  if (session) {
-    await saveCurrentSession(null);
-    stopTimer();
-
-    // 対象サイトのタブをセッション開始画面にリダイレクト
-    const tabs = await chrome.tabs.query({});
-    const settings = await getSettings();
-
-    for (const tab of tabs) {
-      if (tab.id && tab.url) {
-        const matchedRule = matchSiteRule(
-          tab.url,
-          settings.siteRules,
-          settings.globalExcludePatterns,
-        );
-        if (matchedRule) {
-          await chrome.tabs.update(tab.id, {
-            url: buildStartSessionUrl(matchedRule.id, tab.url),
-          });
-        }
-      }
-    }
-  }
+  await resetCurrentSessionAndRedirectMatchedTabs();
 
   // 次の0:00までのタイマーを再設定
   scheduleMidnightReset();
@@ -272,31 +268,7 @@ setInterval(async () => {
     lastCheckDate = currentDate;
     console.log("[Site Blocker] Date changed (fallback check)");
 
-    // 日付が変わったらセッションをリセット
-    const session = await getCurrentSession();
-    if (session) {
-      await saveCurrentSession(null);
-      stopTimer();
-
-      // 対象サイトのタブをセッション開始画面にリダイレクト
-      const tabs = await chrome.tabs.query({});
-      const settings = await getSettings();
-
-      for (const tab of tabs) {
-        if (tab.id && tab.url) {
-          const matchedRule = matchSiteRule(
-            tab.url,
-            settings.siteRules,
-            settings.globalExcludePatterns,
-          );
-          if (matchedRule) {
-            await chrome.tabs.update(tab.id, {
-              url: buildStartSessionUrl(matchedRule.id, tab.url),
-            });
-          }
-        }
-      }
-    }
+    await resetCurrentSessionAndRedirectMatchedTabs();
 
     // 次の0:00までのタイマーを再設定
     scheduleMidnightReset();
@@ -341,7 +313,7 @@ chrome.tabs.onCreated.addListener(async (tab) => {
 
 // ストレージの変更を監視してタイマーを開始/停止
 storage.watch({
-  currentSession: (change) => {
+  [STORAGE_KEYS.CURRENT_SESSION]: (change) => {
     const session = isSession(change.newValue) ? change.newValue : null;
 
     if (session && session.isActive && session.remainingSeconds > 0) {

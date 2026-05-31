@@ -5,6 +5,7 @@ import { DailyUsageChart } from "./DailyUsageChart";
 import { FaviconBadge, Button, Surface } from "~components/ui";
 import { useDashboard } from "~hooks/useDashboard";
 import type { Settings } from "~lib/types";
+import { buildStartSessionUrl } from "~lib/extension-urls";
 
 interface DashboardViewProps {
   settings: Settings;
@@ -21,10 +22,7 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
   }, [reloadKey, settings.siteRules]);
 
   const handleStartSession = (siteId: string) => {
-    const params = new URLSearchParams();
-    params.set("view", "start-session");
-    params.set("siteId", siteId);
-    window.location.href = chrome.runtime.getURL(`options.html?${params.toString()}`);
+    window.location.href = buildStartSessionUrl(siteId);
   };
 
   return (

@@ -2,8 +2,8 @@ import type { PlasmoCSConfig, PlasmoGetStyle } from "plasmo";
 import { useEffect, useState } from "react";
 import { Storage } from "@plasmohq/storage";
 import { formatTime } from "~lib/timer";
-import { getSettings } from "~lib/storage";
-import { isSession } from "~lib/types";
+import { getCurrentSession, getSettings } from "~lib/storage";
+import { isSession, STORAGE_KEYS } from "~lib/types";
 import type { Session } from "~lib/types";
 import { matchSiteRule } from "~lib/url-matcher";
 
@@ -27,7 +27,7 @@ const TimerDisplay = () => {
   const [isTarget, setIsTarget] = useState(false);
 
   const loadSession = async () => {
-    const currentSession = await storage.get<Session>("currentSession");
+    const currentSession = await getCurrentSession();
     setSession(currentSession);
   };
 
@@ -47,7 +47,7 @@ const TimerDisplay = () => {
 
     // ストレージの変更を監視
     storage.watch({
-      currentSession: (change) => {
+      [STORAGE_KEYS.CURRENT_SESSION]: (change) => {
         setSession(isSession(change.newValue) ? change.newValue : null);
       },
     });

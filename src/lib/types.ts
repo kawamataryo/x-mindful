@@ -69,6 +69,7 @@ export const STORAGE_KEYS = {
   SETTINGS: "settings",
   CURRENT_SESSION: "currentSession",
   DAILY_USAGE: "dailyUsage",
+  DAILY_USAGE_INDEX: "dailyUsageIndex",
 } as const;
 
 // デフォルト設定

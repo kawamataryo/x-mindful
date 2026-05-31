@@ -37,17 +37,25 @@ export function matchSiteRule(
   siteRules: SiteRule[],
   globalExcludePatterns: string[],
 ): SiteRule | null {
-  if (globalExcludePatterns.some((pattern) => compilePattern(pattern)?.test(url))) {
+  if (globalExcludePatterns.some((pattern) => testPattern(pattern, url))) {
     return null;
   }
 
   for (const rule of siteRules) {
-    if (rule.includePatterns.some((pattern) => compilePattern(pattern)?.test(url))) {
+    if (rule.includePatterns.some((pattern) => testPattern(pattern, url))) {
       return rule;
     }
   }
 
   return null;
+}
+
+function testPattern(pattern: string, url: string): boolean {
+  const regex = compilePattern(pattern);
+  if (!regex) return false;
+
+  regex.lastIndex = 0;
+  return regex.test(url);
 }
 
 export function isTimerTargetPage(

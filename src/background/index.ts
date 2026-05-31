@@ -5,7 +5,7 @@ import {
   initializeStorage,
   getSettings,
 } from "~lib/storage";
-import { decrementSession, isSessionExpired, isSessionToday } from "~lib/timer";
+import { updateSessionRemainingTime, isSessionExpired, isSessionToday } from "~lib/timer";
 import { matchSiteRule } from "~lib/url-matcher";
 import { getToday, isSession } from "~lib/types";
 
@@ -50,8 +50,8 @@ function startTimer() {
         return;
       }
 
-      // 残り時間をデクリメント
-      const updatedSession = decrementSession(session);
+      // 壁時計ベースで残り時間を更新
+      const updatedSession = updateSessionRemainingTime(session);
 
       // セッションが終了したかチェック
       if (isSessionExpired(updatedSession)) {
@@ -187,15 +187,10 @@ async function restoreState() {
     }
 
     // 経過時間を計算して残り時間を更新
-    const now = Date.now();
-    const elapsedSeconds = Math.floor((now - session.startTime) / 1000);
-    const totalSeconds = session.durationMinutes * 60;
-    const remainingSeconds = Math.max(0, totalSeconds - elapsedSeconds);
-
+    const updatedSessionWithRemaining = updateSessionRemainingTime(session);
     const updatedSession = {
-      ...session,
-      remainingSeconds,
-      isActive: remainingSeconds > 0 && session.isActive,
+      ...updatedSessionWithRemaining,
+      isActive: updatedSessionWithRemaining.remainingSeconds > 0 && session.isActive,
     };
 
     await saveCurrentSession(updatedSession);

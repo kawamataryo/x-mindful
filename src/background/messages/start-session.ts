@@ -6,6 +6,7 @@ import {
   getSettings,
 } from "~lib/storage";
 import { createSession } from "~lib/timer";
+import type { Session } from "~lib/types";
 
 export type StartSessionRequest = {
   durationMinutes: number;
@@ -16,7 +17,7 @@ export type StartSessionRequest = {
 export type StartSessionResponse = {
   success: boolean;
   error?: string;
-  session?: any;
+  session?: Session;
 };
 
 const handler: PlasmoMessaging.MessageHandler<StartSessionRequest, StartSessionResponse> = async (
@@ -55,7 +56,7 @@ const handler: PlasmoMessaging.MessageHandler<StartSessionRequest, StartSessionR
 
     // 既存のアクティブセッションがないかチェック
     const existingSession = await getCurrentSession();
-    if (existingSession && existingSession.isActive) {
+    if (existingSession && existingSession.isActive && existingSession.remainingSeconds > 0) {
       res.send({
         success: false,
         error: "既にアクティブなセッションが存在します",

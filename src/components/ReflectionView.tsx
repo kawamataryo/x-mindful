@@ -8,17 +8,19 @@ export function ReflectionView() {
   const canSave = reflection.trim().length > 0 && !reflectionLoading;
 
   return (
-    <div className="min-h-screen bg-mesh particles particles-extra flex items-center justify-center p-4">
-      <Surface variant="elevated" className="p-8 max-w-lg w-full animate-fade-in-up relative z-10">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-semibold text-gradient mb-3 tracking-tight">
-            Session Complete
-          </h2>
-          <p className="text-lg text-content-secondary">この時間で何を得られましたか？</p>
+    <div className="flex min-h-screen items-center justify-center bg-mesh p-4">
+      <Surface variant="elevated" className="relative z-10 w-full max-w-lg animate-fade-in-up p-7">
+        <div className="mb-8 text-center">
+          <h2 className="mb-3 text-3xl font-semibold tracking-tight text-content">Reflect</h2>
+          <p className="text-content-secondary">
+            何をしに来て、何ができましたか。ひとこと残して終了します。
+          </p>
         </div>
 
         <div className="mb-6">
-          <label className="block mb-3 font-semibold text-content">Reflection</label>
+          <label className="mb-3 block text-sm font-medium text-content-secondary">
+            Reflection
+          </label>
           <textarea
             value={reflection}
             onChange={(e) => setReflection(e.target.value)}
@@ -29,12 +31,14 @@ export function ReflectionView() {
                 if (canSave) handleSaveReflection();
               }
             }}
-            placeholder="例: 新しい技術のトレンドを3つ発見できた"
+            placeholder="例: 目的の投稿だけ確認できた。次回も5分で終える。"
             rows={5}
             disabled={reflectionLoading}
             className="w-full px-4 py-3 glass-input rounded-lg text-content placeholder-content-tertiary text-base resize-none focus:outline-none focus-ring disabled:opacity-60"
           />
-          <p className="text-sm text-content-secondary mt-2">{reflection.trim().length} characters</p>
+          <p className="text-sm text-content-secondary mt-2">
+            {reflection.trim().length} characters
+          </p>
         </div>
 
         {reflectionError && (

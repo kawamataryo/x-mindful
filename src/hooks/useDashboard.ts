@@ -24,44 +24,27 @@ export function useDashboard(siteRules: SiteRule[]) {
   const [allSessions, setAllSessions] = useState<SessionRecordWithDate[]>([]);
   const [dailyUsageHistory, setDailyUsageHistory] = useState<DailyUsage[]>([]);
 
-  // 全セッション履歴を取得（最新順）
-  const loadAllSessions = async () => {
-    try {
-      const allDailyUsage = await getAllDailyUsage();
-      const sessionsWithDate: SessionRecordWithDate[] = [];
+  const applyUsageHistory = (allDailyUsage: DailyUsage[]) => {
+    const siteLabelById = new Map(siteRules.map((rule) => [rule.id, rule.label]));
+    const sessionsWithDate: SessionRecordWithDate[] = [];
 
-      allDailyUsage.forEach((dailyUsage) => {
-        Object.values(dailyUsage.siteUsage).forEach((siteUsage) => {
-          siteUsage.sessions.forEach((session) => {
-            const siteLabel = siteRules.find((rule) => rule.id === session.siteId)?.label;
-            sessionsWithDate.push({
-              ...session,
-              date: dailyUsage.date,
-              siteLabel,
-            });
+    allDailyUsage.forEach((dailyUsage) => {
+      Object.values(dailyUsage.siteUsage).forEach((siteUsage) => {
+        siteUsage.sessions.forEach((session) => {
+          sessionsWithDate.push({
+            ...session,
+            date: dailyUsage.date,
+            siteLabel: siteLabelById.get(session.siteId),
           });
         });
       });
+    });
 
-      // startTimeでソート（最新順）
-      sessionsWithDate.sort((a, b) => b.startTime - a.startTime);
+    // startTimeでソート（最新順）
+    sessionsWithDate.sort((a, b) => b.startTime - a.startTime);
 
-      setAllSessions(sessionsWithDate);
-    } catch (error) {
-      console.error("Error loading all sessions:", error);
-    }
-  };
-
-  // 日別利用時間履歴を取得（直近30日分）
-  const loadDailyUsageHistory = async () => {
-    try {
-      const allDailyUsage = await getAllDailyUsage();
-      // 最新30日分に制限
-      const recentUsage = allDailyUsage.slice(0, 30);
-      setDailyUsageHistory(recentUsage);
-    } catch (error) {
-      console.error("Error loading daily usage history:", error);
-    }
+    setAllSessions(sessionsWithDate);
+    setDailyUsageHistory(allDailyUsage.slice(0, 30));
   };
 
   // ダッシュボードデータをロード
@@ -69,27 +52,28 @@ export function useDashboard(siteRules: SiteRule[]) {
     setDashboardLoading(true);
     try {
       const todayData = await getDailyUsage();
-      const nextStats: SiteStats[] = [];
+      const remainingBySite = await Promise.all(
+        siteRules.map(async (rule) => [rule.id, await getRemainingMinutes(rule.id)] as const),
+      );
+      const remainingMinutesBySite = new Map(remainingBySite);
 
-      for (const rule of siteRules) {
+      const nextStats: SiteStats[] = siteRules.map((rule) => {
         const siteUsage = todayData.siteUsage[rule.id];
-        const remaining = await getRemainingMinutes(rule.id);
-        nextStats.push({
+        return {
           siteId: rule.id,
           label: rule.label,
           dailyLimitMinutes: rule.dailyLimitMinutes,
-          remainingMinutes: remaining,
+          remainingMinutes: remainingMinutesBySite.get(rule.id) || 0,
           usedMinutes: siteUsage?.totalUsedMinutes || 0,
           sessionCount: siteUsage?.sessions.length || 0,
           siteUrl: rule.siteUrl,
-        });
-      }
+        };
+      });
 
       setSiteStats(nextStats);
 
       if (!skipSessions) {
-        await loadAllSessions();
-        await loadDailyUsageHistory();
+        applyUsageHistory(await getAllDailyUsage());
       }
     } catch (error) {
       console.error("Error loading dashboard data:", error);

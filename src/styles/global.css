@@ -3,70 +3,54 @@
 @tailwind utilities;
 
 /* ============================================
-   Design Tokens — Liquid Glass
+   Design Tokens — Mindful Minimal
    ============================================ */
 :root {
   color-scheme: light;
 
-  /* ---- Gradient Colors ---- */
-  --gradient-1: #e0e7ff; /* lavender */
-  --gradient-2: #fce7f3; /* pink */
-  --gradient-3: #dbeafe; /* sky blue */
-  --gradient-4: #f3e8ff; /* light purple */
+  --base: 248 250 252;
+  --base-subtle: 241 245 249;
+  --base-muted: 226 232 240;
 
-  /* ---- Glass ---- */
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-bg-hover: rgba(255, 255, 255, 0.85);
-  --glass-shadow: 0 4px 24px rgba(99, 102, 241, 0.08), 0 1px 3px rgba(99, 102, 241, 0.04);
-  --glass-shadow-hover: 0 8px 32px rgba(99, 102, 241, 0.12), 0 2px 6px rgba(99, 102, 241, 0.06);
+  --text: 15 23 42;
+  --text-secondary: 71 85 105;
+  --text-tertiary: 148 163 184;
 
-  /* ---- Input specific ---- */
-  --input-border: rgba(139, 92, 246, 0.18);
-  --input-border-hover: rgba(139, 92, 246, 0.28);
-
-  /* ---- Base (fallback) ---- */
-  --base: 248 250 252; /* #f8fafc */
-  --base-subtle: 241 245 249; /* #f1f5f9 */
-  --base-muted: 226 232 240; /* #e2e8f0 */
-
-  /* ---- Text ---- */
-  --text: 30 27 75; /* deep indigo #1e1b4b */
-  --text-secondary: 79 70 129; /* #4f4681 */
-  --text-tertiary: 139 132 175; /* #8b84af */
-
-  /* ---- Accent ---- */
-  --accent: 139 92 246; /* violet #8b5cf6 */
-  --accent-hover: 124 58 237; /* #7c3aed */
-  --accent-cyan: 6 182 212; /* cyan #06b6d4 */
+  --accent: 37 99 235;
+  --accent-hover: 29 78 216;
+  --accent-soft: 239 246 255;
 
   /* ---- Semantic ---- */
-  --success: 16 185 129; /* emerald #10b981 */
-  --warning: 245 158 11; /* amber #f59e0b */
-  --danger: 239 68 68; /* rose #ef4444 */
+  --success: 5 150 105;
+  --warning: 217 119 6;
+  --danger: 220 38 38;
 
-  /* ---- Shadows (purple tinted) ---- */
-  --shadow-sm: 0 2px 8px rgba(99, 102, 241, 0.06);
-  --shadow-md: 0 8px 24px rgba(99, 102, 241, 0.1);
-  --shadow-lg: 0 16px 48px rgba(99, 102, 241, 0.15);
+  --surface: rgba(255, 255, 255, 0.96);
+  --surface-hover: #ffffff;
+  --border: rgba(15, 23, 42, 0.1);
+  --border-strong: rgba(15, 23, 42, 0.16);
+  --input-border: rgba(15, 23, 42, 0.14);
+  --input-border-hover: rgba(37, 99, 235, 0.34);
 
-  /* ---- Radii (modern, larger) ---- */
+  --glass-bg: var(--surface);
+  --glass-bg-hover: var(--surface-hover);
+  --glass-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --glass-shadow-hover: 0 8px 22px rgba(15, 23, 42, 0.08);
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-md: 0 8px 24px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 18px 48px rgba(15, 23, 42, 0.1);
+
   --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
 
-  /* ---- Focus ring ---- */
-  --focus-ring: 0 0 0 2px rgba(255, 255, 255, 0.8), 0 0 0 4px rgb(var(--accent));
+  --focus-ring: 0 0 0 3px rgba(37, 99, 235, 0.18);
 
-  /* ---- Transitions ---- */
   --transition-fast: 150ms;
   --transition-normal: 300ms;
   --transition-slow: 500ms;
-
-  /* ---- Particles ---- */
-  --particle-1: rgba(139, 92, 246, 0.3);
-  --particle-2: rgba(6, 182, 212, 0.25);
-  --particle-3: rgba(236, 72, 153, 0.2);
 }
 
 /* ---- Reduced motion ---- */
@@ -95,17 +79,10 @@ body {
   box-shadow: var(--focus-ring);
 }
 
-/* ============================================
-   Mesh Gradient Background
-   ============================================ */
 .bg-mesh {
-  background-color: #f8fafc;
-  background-image:
-    radial-gradient(ellipse 80% 50% at 0% 0%, var(--gradient-1) 0px, transparent 50%),
-    radial-gradient(ellipse 60% 40% at 100% 0%, var(--gradient-2) 0px, transparent 50%),
-    radial-gradient(ellipse 50% 50% at 100% 100%, var(--gradient-3) 0px, transparent 50%),
-    radial-gradient(ellipse 70% 60% at 0% 100%, var(--gradient-4) 0px, transparent 50%);
-  background-attachment: fixed;
+  background:
+    linear-gradient(#f8fafc, #f8fafc),
+    radial-gradient(circle at 50% 0%, rgba(37, 99, 235, 0.05), transparent 36%);
 }
 
 /* ============================================
@@ -113,8 +90,7 @@ body {
    ============================================ */
 .glass {
   background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
   box-shadow: var(--glass-shadow);
   transition:
     background var(--transition-fast) ease-out,
@@ -128,9 +104,7 @@ body {
 
 /* ---- Glass Input (for form fields - with subtle border) ---- */
 .glass-input {
-  background: rgba(255, 255, 255, 0.75);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: #ffffff;
   border: 1px solid var(--input-border);
   box-shadow: inset 0 1px 2px rgba(99, 102, 241, 0.03);
   transition:
@@ -149,87 +123,8 @@ body {
   box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.08);
 }
 
-/* ============================================
-   Floating Particles
-   ============================================ */
 .particles {
   position: relative;
-  overflow: hidden;
-}
-
-.particles::before,
-.particles::after {
-  content: '';
-  position: fixed;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-.particles::before {
-  width: 300px;
-  height: 300px;
-  background: var(--particle-1);
-  top: 10%;
-  left: 5%;
-  filter: blur(80px);
-  animation: float-1 20s ease-in-out infinite;
-}
-
-.particles::after {
-  width: 250px;
-  height: 250px;
-  background: var(--particle-2);
-  bottom: 15%;
-  right: 10%;
-  filter: blur(70px);
-  animation: float-2 25s ease-in-out infinite;
-}
-
-/* Additional particle via child pseudo-element */
-.particles-extra::before {
-  content: '';
-  position: fixed;
-  width: 200px;
-  height: 200px;
-  background: var(--particle-3);
-  top: 60%;
-  left: 60%;
-  border-radius: 50%;
-  filter: blur(60px);
-  pointer-events: none;
-  opacity: 0.5;
-  animation: float-3 18s ease-in-out infinite;
-}
-
-@keyframes float-1 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  33% {
-    transform: translate(30px, -20px) scale(1.05);
-  }
-  66% {
-    transform: translate(-20px, 15px) scale(0.95);
-  }
-}
-
-@keyframes float-2 {
-  0%, 100% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(-40px, -30px) scale(1.1);
-  }
-}
-
-@keyframes float-3 {
-  0%, 100% {
-    transform: translate(0, 0);
-  }
-  50% {
-    transform: translate(25px, 35px);
-  }
 }
 
 /* ============================================
@@ -248,7 +143,8 @@ body {
 }
 
 @keyframes pulse-warning {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -270,10 +166,18 @@ body {
   animation: fade-in-up var(--transition-normal) ease-out both;
 }
 
-.animate-fade-in-up-1 { animation-delay: 50ms; }
-.animate-fade-in-up-2 { animation-delay: 100ms; }
-.animate-fade-in-up-3 { animation-delay: 150ms; }
-.animate-fade-in-up-4 { animation-delay: 200ms; }
+.animate-fade-in-up-1 {
+  animation-delay: 50ms;
+}
+.animate-fade-in-up-2 {
+  animation-delay: 100ms;
+}
+.animate-fade-in-up-3 {
+  animation-delay: 150ms;
+}
+.animate-fade-in-up-4 {
+  animation-delay: 200ms;
+}
 
 .animate-pulse-warning {
   animation: pulse-warning 1.5s ease-in-out infinite;
@@ -281,21 +185,14 @@ body {
 
 /* ---- Gradient button with slide hover ---- */
 .btn-gradient {
-  background: linear-gradient(
-    90deg,
-    rgb(var(--accent)) 0%,
-    rgb(var(--accent-cyan)) 50%,
-    rgb(var(--accent)) 100%
-  );
-  background-size: 200% 100%;
-  background-position: 0% 50%;
+  background: rgb(var(--accent));
   transition:
-    background-position var(--transition-normal) ease,
+    background var(--transition-fast) ease-out,
     box-shadow var(--transition-fast) ease-out;
 }
 
 .btn-gradient:hover {
-  background-position: 100% 50%;
+  background: rgb(var(--accent-hover));
 }
 
 /* ---- Hover effects ---- */
@@ -306,7 +203,7 @@ body {
 }
 
 .hover-lift:hover {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-md);
 }
 
@@ -326,8 +223,18 @@ body {
    Gradient Text
    ============================================ */
 .text-gradient {
-  background: linear-gradient(135deg, rgb(var(--accent)) 0%, rgb(var(--accent-cyan)) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: rgb(var(--text));
+}
+
+.progress-track {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(var(--base-muted));
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: rgb(var(--accent));
 }

@@ -22,22 +22,14 @@ const formatDate = (dateStr: string): string => {
   return `${Number(m)}/${Number(d)}`;
 };
 
-// Liquid Glass palette: purple to cyan gradient spectrum
 const palette = [
-  "rgba(139, 92, 246, 0.75)", // violet
-  "rgba(6, 182, 212, 0.7)", // cyan
-  "rgba(236, 72, 153, 0.7)", // pink
-  "rgba(59, 130, 246, 0.7)", // blue
-  "rgba(168, 85, 247, 0.7)", // purple
-  "rgba(20, 184, 166, 0.7)", // teal
-  "rgba(244, 114, 182, 0.65)", // rose
+  "rgba(37, 99, 235, 0.78)",
+  "rgba(5, 150, 105, 0.7)",
+  "rgba(217, 119, 6, 0.68)",
+  "rgba(71, 85, 105, 0.62)",
 ];
 
 export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChartProps) {
-  if (dailyUsageHistory.length === 0 || siteRules.length === 0) {
-    return <div className="text-center text-content-secondary py-8">No data available</div>;
-  }
-
   const reversed = [...dailyUsageHistory].reverse();
   const labels = reversed.map((item) => formatDate(item.date));
 
@@ -67,7 +59,9 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
       legend: {
         position: "bottom" as const,
         labels: {
-          color: "rgb(79, 70, 129)", // text-secondary
+          color: "rgb(71, 85, 105)",
+          boxWidth: 10,
+          boxHeight: 10,
         },
       },
       tooltip: {
@@ -79,34 +73,38 @@ export function DailyUsageChart({ dailyUsageHistory, siteRules }: DailyUsageChar
     scales: {
       x: {
         ticks: {
-          color: "rgb(79, 70, 129)",
+          color: "rgb(100, 116, 139)",
         },
         grid: {
-          color: "rgba(139, 92, 246, 0.1)", // subtle purple grid
+          color: "rgba(148, 163, 184, 0.18)",
         },
       },
       y: {
         beginAtZero: true,
         ticks: {
           callback: (value: any) => `${value}min`,
-          color: "rgb(79, 70, 129)",
+          color: "rgb(100, 116, 139)",
         },
         grid: {
-          color: "rgba(139, 92, 246, 0.1)",
+          color: "rgba(148, 163, 184, 0.18)",
         },
       },
     },
   };
 
   return (
-    <div className="w-full">
-      <h3 className="text-lg font-semibold text-content mb-4">Daily Usage (Last 30 Days)</h3>
-      <Surface variant="inset" className="p-4">
+    <Surface variant="elevated" className="p-5">
+      <div className="mb-4 flex items-baseline justify-between gap-3">
+        <h3 className="text-base font-semibold text-content">Usage trend</h3>
+        <span className="text-xs text-content-secondary">Avg {average}m/day</span>
+      </div>
+      {dailyUsageHistory.length === 0 || siteRules.length === 0 ? (
+        <div className="py-8 text-center text-content-secondary">No data available</div>
+      ) : (
         <div className="h-[220px]">
           <Bar data={chartData} options={options} />
         </div>
-        <div className="mt-3 text-xs text-content-secondary text-right">Avg: {average}min/day</div>
-      </Surface>
-    </div>
+      )}
+    </Surface>
   );
 }

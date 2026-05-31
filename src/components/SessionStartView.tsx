@@ -35,18 +35,18 @@ export function SessionStartView() {
   if (activeSession && activeSession.isActive && activeSession.remainingSeconds > 0) {
     const remaining = formatTime(activeSession.remainingSeconds);
     return (
-      <div className="min-h-screen bg-mesh particles flex items-center justify-center p-4">
-        <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up relative z-10">
-          <h2 className="text-3xl font-semibold text-gradient mb-3 text-center tracking-tight">
-            Session Active
-          </h2>
-          <p className="text-content-secondary text-center mb-2">
-            サイト:{" "}
-            <strong className="text-accent">{activeSiteLabel || activeSession.siteId}</strong>
-          </p>
-          <p className="text-content-secondary text-center mb-6">
-            残り: <strong className="text-2xl text-gradient">{remaining}</strong>
-          </p>
+      <div className="flex min-h-screen items-center justify-center bg-mesh p-4">
+        <Surface
+          variant="elevated"
+          className="relative z-10 w-full max-w-md animate-fade-in-up p-7"
+        >
+          <div className="mb-6 text-center">
+            <p className="text-sm font-medium text-content-secondary">Active session</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-content">{remaining}</h2>
+            <p className="mt-2 text-sm text-content-secondary">
+              {activeSiteLabel || activeSession.siteId}
+            </p>
+          </div>
 
           {startError && (
             <p className="text-danger mb-4 text-sm text-center font-medium">{startError}</p>
@@ -77,15 +77,18 @@ export function SessionStartView() {
   }
 
   return (
-    <div className="min-h-screen bg-mesh particles particles-extra flex items-center justify-center p-4">
-      <Surface variant="elevated" className="p-8 max-w-md w-full animate-fade-in-up relative z-10">
-        <h2 className="text-3xl font-semibold text-gradient mb-4 text-center tracking-tight">
-          Start Session
-        </h2>
+    <div className="flex min-h-screen items-center justify-center bg-mesh p-4">
+      <Surface variant="elevated" className="relative z-10 w-full max-w-md animate-fade-in-up p-7">
+        <div className="mb-6 text-center">
+          <h2 className="text-3xl font-semibold tracking-tight text-content">Start session</h2>
+          <p className="mt-2 text-sm text-content-secondary">
+            Pick a duration, then go back to the site.
+          </p>
+        </div>
 
-        <div className="mb-6">
-          <label className="block mb-2 font-medium text-content-secondary">Target Site</label>
-          <div className="glass px-4 py-3 rounded-lg text-content flex items-center gap-3">
+        <div className="mb-5">
+          <label className="mb-2 block text-sm font-medium text-content-secondary">Site</label>
+          <div className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3 text-content">
             <FaviconBadge
               siteUrl={targetSiteRule?.siteUrl || returnUrl || undefined}
               label={targetSiteRule?.label || targetSiteId || undefined}
@@ -95,37 +98,38 @@ export function SessionStartView() {
           </div>
         </div>
 
-        <p className="text-content-secondary text-center mb-6">
-          Time Remaining Today:{" "}
-          <strong className="text-2xl text-gradient">{remainingMinutes}min</strong>
-        </p>
+        <div className="mb-6 rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-900">
+          <span className="font-semibold">{remainingMinutes}m</span> remaining today
+        </div>
 
         <div className="mb-6">
-          <label className="block mb-3 font-medium text-content-secondary">Select Duration</label>
+          <label className="mb-3 block text-sm font-medium text-content-secondary">Duration</label>
           <div className="grid grid-cols-2 gap-3">
             {presets.map((minutes) => (
               <button
                 key={minutes}
                 onClick={() => handlePresetClick(minutes)}
                 disabled={minutes > remainingMinutes || startLoading}
-                className={`px-6 py-4 rounded-lg font-semibold text-lg transition-all focus-ring ${
+                className={`rounded-lg border px-6 py-4 text-lg font-semibold transition-all focus-ring ${
                   selectedMinutes === minutes
-                    ? "glass border-2 border-accent text-accent shadow-md"
-                    : "glass text-content"
+                    ? "border-blue-600 bg-blue-50 text-blue-700"
+                    : "border-slate-200 bg-white text-content"
                 } ${
                   minutes > remainingMinutes || startLoading
                     ? "opacity-40 cursor-not-allowed"
-                    : "cursor-pointer hover:border-accent/50 hover:shadow-md"
+                    : "cursor-pointer hover:border-blue-300"
                 }`}
               >
-                {minutes}min
+                {minutes}m
               </button>
             ))}
           </div>
         </div>
 
         <div className="mb-6">
-          <label className="block mb-2 font-medium text-content-secondary">Custom (minutes)</label>
+          <label className="mb-2 block text-sm font-medium text-content-secondary">
+            Custom minutes
+          </label>
           <input
             type="number"
             value={customMinutes}

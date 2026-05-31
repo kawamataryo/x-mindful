@@ -18,12 +18,21 @@ export function createSession(durationMinutes: number, siteId: string, siteUrl?:
 }
 
 /**
- * セッションの残り時間をデクリメント
+ * 壁時計ベースでセッションの残り時間を計算
  */
-export function decrementSession(session: Session): Session {
+export function getRemainingSeconds(session: Session, now = Date.now()): number {
+  const totalSeconds = session.durationMinutes * 60;
+  const elapsedSeconds = Math.max(0, Math.floor((now - session.startTime) / 1000));
+  return Math.max(0, totalSeconds - elapsedSeconds);
+}
+
+/**
+ * セッションの残り時間を壁時計ベースで更新
+ */
+export function updateSessionRemainingTime(session: Session, now = Date.now()): Session {
   return {
     ...session,
-    remainingSeconds: Math.max(0, session.remainingSeconds - 1),
+    remainingSeconds: getRemainingSeconds(session, now),
   };
 }
 
@@ -68,7 +77,8 @@ export function isSessionToday(session: Session): boolean {
  * セッションの経過時間を計算（秒）
  */
 export function getElapsedSeconds(session: Session): number {
-  return session.durationMinutes * 60 - session.remainingSeconds;
+  const totalSeconds = session.durationMinutes * 60;
+  return totalSeconds - getRemainingSeconds(session);
 }
 
 /**

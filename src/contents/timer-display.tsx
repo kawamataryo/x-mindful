@@ -122,7 +122,7 @@ const TimerDisplay = () => {
       <div
         className="text-xs font-semibold"
         style={{
-          color: "rgb(109, 40, 217)", /* より濃いパープル */
+          color: "rgb(109, 40, 217)" /* より濃いパープル */,
         }}
       >
         {timeText}

@@ -1,5 +1,7 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging";
-import { getCurrentSession, saveCurrentSession } from "~lib/storage";
+import { addSessionRecord, getCurrentSession, saveCurrentSession } from "~lib/storage";
+import { getElapsedMinutes } from "~lib/timer";
+import type { SessionRecord } from "~lib/types";
 
 export type EndSessionRequest = {};
 
@@ -23,13 +25,21 @@ const handler: PlasmoMessaging.MessageHandler<EndSessionRequest, EndSessionRespo
       return;
     }
 
-    // セッションを非アクティブに設定
-    const updatedSession = {
-      ...currentSession,
-      isActive: false,
-    };
+    if (currentSession.isActive) {
+      const record: SessionRecord = {
+        id: currentSession.id,
+        startTime: currentSession.startTime,
+        endTime: Date.now(),
+        durationMinutes: getElapsedMinutes(currentSession),
+        reflection: "",
+        siteId: currentSession.siteId,
+        siteUrl: currentSession.siteUrl,
+      };
 
-    await saveCurrentSession(updatedSession);
+      await addSessionRecord(record);
+    }
+
+    await saveCurrentSession(null);
 
     res.send({ success: true });
   } catch (error) {

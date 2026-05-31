@@ -1,12 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSettings } from "~hooks/useSettings";
 import { useDashboard } from "~hooks/useDashboard";
 import { FaviconBadge, Button, Surface } from "~components/ui";
+import { addSiteRuleFromUrl } from "~lib/storage";
+import { findSiteRuleByOrigin, getSupportedOrigin } from "~lib/site-rule";
 import "~styles/global.css";
 
 function Popup() {
   const { settings, loadSettings } = useSettings();
   const { siteStats, dashboardLoading, loadDashboardData } = useDashboard(settings.siteRules);
+  const [currentTabUrl, setCurrentTabUrl] = useState<string | null>(null);
+  const [currentTabId, setCurrentTabId] = useState<number | null>(null);
+  const [addingSite, setAddingSite] = useState(false);
+  const [addMessage, setAddMessage] = useState("");
+
+  const currentOrigin = currentTabUrl ? getSupportedOrigin(currentTabUrl) : null;
+  const currentRule = useMemo(
+    () => (currentOrigin ? findSiteRuleByOrigin(settings, currentOrigin) : null),
+    [currentOrigin, settings],
+  );
 
   useEffect(() => {
     const initialize = async () => {
@@ -18,6 +30,21 @@ function Popup() {
     };
     initialize();
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    const loadCurrentTab = async () => {
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        setCurrentTabUrl(tab?.url || null);
+        setCurrentTabId(tab?.id || null);
+      } catch (error) {
+        console.error("Error loading current tab:", error);
+        setCurrentTabUrl(null);
+        setCurrentTabId(null);
+      }
+    };
+    loadCurrentTab();
   }, []);
 
   useEffect(() => {
@@ -37,13 +64,72 @@ function Popup() {
     });
   };
 
+  const handleAddCurrentSite = async () => {
+    if (!currentTabUrl || addingSite) return;
+
+    setAddingSite(true);
+    setAddMessage("");
+
+    try {
+      const result = await addSiteRuleFromUrl(currentTabUrl);
+      if (result.status === "unsupported") {
+        setAddMessage("このページは追加できません");
+        return;
+      }
+
+      await loadSettings();
+      await loadDashboardData(true);
+      setAddMessage(result.status === "added" ? "追加しました" : "既に追加されています");
+
+      if (result.status === "added" && currentTabId !== null) {
+        await chrome.tabs.reload(currentTabId);
+      }
+    } catch (error) {
+      console.error("Error adding current site:", error);
+      setAddMessage("追加に失敗しました");
+    } finally {
+      setAddingSite(false);
+    }
+  };
+
   return (
-    <div className="w-96 min-h-[400px] bg-mesh particles">
-      <div className="p-4 relative z-10">
+    <div className="w-96 min-h-[400px] bg-mesh">
+      <div className="relative z-10 p-4">
         <header className="mb-4">
-          <h1 className="text-xl font-semibold text-gradient tracking-tight">Site Limiter</h1>
-          <p className="text-sm text-content-secondary mt-1">Today's Usage</p>
+          <h1 className="text-xl font-semibold tracking-tight text-content">Mindful Sites</h1>
+          <p className="mt-1 text-sm text-content-secondary">Today</p>
         </header>
+
+        <Surface variant="card" className="mb-3 p-3">
+          <div className="flex items-center gap-2">
+            <FaviconBadge
+              siteUrl={currentOrigin || undefined}
+              label={currentOrigin || "Site"}
+              size="sm"
+            />
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-medium text-content">
+                {currentOrigin
+                  ? new URL(currentOrigin).hostname
+                  : "追加できるサイトを開いてください"}
+              </p>
+              <p className="truncate text-xs text-content-secondary">
+                {currentRule
+                  ? `${currentRule.label} として管理中`
+                  : currentOrigin || "http/https のページが対象です"}
+              </p>
+            </div>
+            <Button
+              onClick={handleAddCurrentSite}
+              variant={currentRule ? "secondary" : "primary"}
+              size="sm"
+              disabled={!currentOrigin || addingSite || !!currentRule}
+            >
+              {addingSite ? "Adding" : currentRule ? "Added" : "Add"}
+            </Button>
+          </div>
+          {addMessage && <p className="mt-2 text-xs text-content-secondary">{addMessage}</p>}
+        </Surface>
 
         {dashboardLoading ? (
           <div className="text-center text-content-secondary py-6">Loading...</div>
@@ -53,22 +139,27 @@ function Popup() {
           <div className="space-y-2">
             {siteStats.map((stats, index) => {
               const isLow = stats.remainingMinutes <= 5;
+              const usedPercent =
+                stats.dailyLimitMinutes > 0
+                  ? Math.min(100, Math.round((stats.usedMinutes / stats.dailyLimitMinutes) * 100))
+                  : 0;
               const delayClass = index < 4 ? `animate-fade-in-up-${index + 1}` : "";
               return (
-                <Surface
-                  key={stats.siteId}
-                  variant="card"
-                  className={`flex items-center justify-between gap-3 px-3 py-2 animate-fade-in-up ${delayClass}`}
-                >
+                <Surface key={stats.siteId} variant="card" className={`p-3 ${delayClass}`}>
                   <div className="flex items-center gap-2">
                     <FaviconBadge siteUrl={stats.siteUrl} label={stats.label} size="sm" />
-                    <span className="text-sm text-content">{stats.label}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm font-medium text-content">
+                      {stats.label}
+                    </span>
+                    <span
+                      className={`text-sm font-semibold ${isLow ? "text-danger" : "text-content"}`}
+                    >
+                      {stats.remainingMinutes}m
+                    </span>
                   </div>
-                  <span
-                    className={`text-sm font-semibold ${isLow ? "text-danger animate-pulse-warning" : "text-accent"}`}
-                  >
-                    {stats.remainingMinutes}min
-                  </span>
+                  <div className="progress-track mt-3">
+                    <div className="progress-fill" style={{ width: `${usedPercent}%` }} />
+                  </div>
                 </Surface>
               );
             })}

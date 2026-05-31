@@ -13,10 +13,12 @@ const baseClasses =
   "inline-flex items-center justify-center gap-2 font-medium focus-ring rounded-lg disabled:opacity-50 disabled:cursor-not-allowed";
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "btn-gradient text-white shadow-md hover:shadow-lg",
-  secondary: "glass glass-hover text-content transition-all duration-150",
-  quiet: "bg-transparent text-content-secondary hover:text-content hover:bg-white/40 transition-all duration-150",
-  danger: "bg-danger text-white hover:bg-danger/90 shadow-md transition-colors duration-150",
+  primary: "btn-gradient text-white shadow-sm hover:shadow-md",
+  secondary:
+    "bg-white border border-slate-200 text-content hover:border-slate-300 hover:bg-slate-50 transition-all duration-150",
+  quiet:
+    "bg-transparent text-content-secondary hover:text-content hover:bg-slate-100 transition-all duration-150",
+  danger: "bg-danger text-white hover:bg-danger/90 shadow-sm transition-colors duration-150",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

@@ -30,7 +30,11 @@ export function useReflection() {
       }
     } catch (err) {
       console.error("Error saving reflection:", err);
-      setReflectionError("振り返りの保存に失敗しました");
+      const message =
+        err instanceof Error && err.message
+          ? `振り返りの保存に失敗しました: ${err.message}`
+          : "振り返りの保存に失敗しました";
+      setReflectionError(message);
     } finally {
       setReflectionLoading(false);
     }

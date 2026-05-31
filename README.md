@@ -96,8 +96,10 @@ pnpm dev
 pnpm dev      # 開発
 pnpm build    # 本番ビルド（build/chrome-mv3-prod）
 pnpm package  # 配布用パッケージ作成
-pnpm lint     # oxlint
-pnpm format   # oxfmt
+pnpm lint         # Oxc linter (oxlint)
+pnpm format       # Oxc formatter (oxfmt --write)
+pnpm format:check # Oxc formatter check
+pnpm test:e2e     # Playwright E2E（popup / 対象サイト導線）
 pnpm fix      # format + lint:fix
 ```
 

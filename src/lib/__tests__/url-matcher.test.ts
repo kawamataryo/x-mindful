@@ -39,6 +39,27 @@ describe("url-matcher", () => {
     expect(result?.id).toBe("x");
   });
 
+  it("matches consistently when cached regex patterns use stateful flags", () => {
+    const statefulRules: SiteRule[] = [
+      {
+        id: "x",
+        label: "X",
+        includePatterns: ["/^https?:\\/\\/x\\.com\\/home/g"],
+        dailyLimitMinutes: 30,
+      },
+    ];
+
+    expect(matchSiteRule("https://x.com/home", statefulRules, [])?.id).toBe("x");
+    expect(matchSiteRule("https://x.com/home", statefulRules, [])?.id).toBe("x");
+  });
+
+  it("excludes consistently when cached global exclude patterns use stateful flags", () => {
+    const excludePatterns = ["/^https?:\\/\\/x\\.com\\/messages/g"];
+
+    expect(matchSiteRule("https://x.com/messages", rules, excludePatterns)).toBeNull();
+    expect(matchSiteRule("https://x.com/messages", rules, excludePatterns)).toBeNull();
+  });
+
   it("reports timer target availability", () => {
     expect(isTimerTargetPage("https://x.com/home", rules, [])).toBe(true);
     expect(isTimerTargetPage("https://example.com", rules, [])).toBe(false);

@@ -1,10 +1,12 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import {
   createSession,
-  decrementSession,
   formatTime,
+  getElapsedMinutes,
+  getRemainingSeconds,
   isSessionExpired,
   isSessionToday,
+  updateSessionRemainingTime,
 } from "../timer";
 
 describe("timer", () => {
@@ -28,18 +30,36 @@ describe("timer", () => {
     expect(session.siteUrl).toBe("https://x.com/home");
   });
 
-  it("decrements remaining seconds with a lower bound of 0", () => {
+  it("updates remaining seconds from wall-clock elapsed time", () => {
+    const start = new Date(2026, 0, 15, 10, 0, 0).getTime();
     const session = {
       id: "s",
-      startTime: 0,
+      startTime: start,
       durationMinutes: 1,
-      remainingSeconds: 1,
+      remainingSeconds: 60,
       isActive: true,
       siteId: "x",
     };
 
-    expect(decrementSession(session).remainingSeconds).toBe(0);
-    expect(decrementSession({ ...session, remainingSeconds: 0 }).remainingSeconds).toBe(0);
+    expect(getRemainingSeconds(session, start + 15_000)).toBe(45);
+    expect(updateSessionRemainingTime(session, start + 75_000).remainingSeconds).toBe(0);
+  });
+
+  it("computes elapsed minutes from wall-clock time with duration bounds", () => {
+    vi.useFakeTimers();
+    const start = new Date(2026, 0, 15, 10, 0, 0).getTime();
+    vi.setSystemTime(start + 75_000);
+
+    expect(
+      getElapsedMinutes({
+        id: "s",
+        startTime: start,
+        durationMinutes: 1,
+        remainingSeconds: 60,
+        isActive: true,
+        siteId: "x",
+      }),
+    ).toBe(1);
   });
 
   it("checks session expiration state", () => {

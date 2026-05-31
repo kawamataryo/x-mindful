@@ -38,7 +38,13 @@ function SettingsPage() {
         <header className="mb-8">
           <div className="flex justify-between items-start">
             <div className="flex items-start gap-4">
-              <Button onClick={handleBack} variant="quiet" size="sm" title="Back" aria-label="Go back">
+              <Button
+                onClick={handleBack}
+                variant="quiet"
+                size="sm"
+                title="Back"
+                aria-label="Go back"
+              >
                 <svg
                   className="w-5 h-5"
                   fill="none"

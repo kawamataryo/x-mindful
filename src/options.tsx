@@ -57,14 +57,14 @@ function OptionsPage() {
 
   // デフォルト画面（ダッシュボード）
   return (
-    <div className="min-h-screen bg-mesh particles particles-extra">
-      <div className="max-w-4xl mx-auto py-8 px-4 relative z-10">
+    <div className="min-h-screen bg-mesh">
+      <div className="relative z-10 mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
         <header className="mb-8">
-          <div className="flex justify-between items-start">
+          <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-semibold text-gradient tracking-tight">Site Limiter</h1>
-              <p className="text-content-secondary mt-2">
-                サイトの利用時間を管理して、意図的な行動をサポート
+              <h1 className="text-2xl font-semibold tracking-tight text-content">Mindful Sites</h1>
+              <p className="mt-1 text-sm text-content-secondary">
+                Start with intention. Stop when the session ends.
               </p>
             </div>
             <Button

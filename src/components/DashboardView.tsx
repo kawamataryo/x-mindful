@@ -28,57 +28,63 @@ export function DashboardView({ settings, reloadKey }: DashboardViewProps) {
   };
 
   return (
-    <Surface variant="elevated" className="p-6 mb-6 animate-fade-in-up">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-content tracking-tight">Today's Usage</h2>
+    <div className="space-y-6 animate-fade-in-up">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-xl font-semibold text-content tracking-tight">Today</h2>
+          <p className="mt-1 text-sm text-content-secondary">
+            Choose a site, start a session, then leave when the timer ends.
+          </p>
+        </div>
       </div>
 
       {siteStats.length === 0 ? (
-        <div className="text-center text-content-secondary py-8">サイトが設定されていません</div>
+        <Surface variant="elevated" className="p-8 text-center text-content-secondary">
+          サイトが設定されていません
+        </Surface>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {siteStats.map((stats) => (
-            <Surface key={stats.siteId} variant="inset" className="p-4">
-              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <FaviconBadge siteUrl={stats.siteUrl} label={stats.label} size="sm" />
-                    <h3 className="text-lg font-semibold text-content">{stats.label}</h3>
+            <Surface key={stats.siteId} variant="elevated" className="p-4">
+              <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_320px_auto] md:items-center">
+                <div className="flex min-w-0 items-center gap-3">
+                  <FaviconBadge siteUrl={stats.siteUrl} label={stats.label} size="md" />
+                  <div className="min-w-0">
+                    <h3 className="truncate text-base font-semibold text-content">{stats.label}</h3>
+                    <p className="text-sm text-content-secondary">
+                      {stats.remainingMinutes}m available today
+                    </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    onClick={() => handleStartSession(stats.siteId)}
-                    variant="primary"
-                    size="sm"
-                  >
-                    Start Session
-                  </Button>
-                </div>
+
+                <DashboardStats
+                  dailyLimitMinutes={stats.dailyLimitMinutes}
+                  remainingMinutes={stats.remainingMinutes}
+                  usedMinutes={stats.usedMinutes}
+                  sessionCount={stats.sessionCount}
+                  loading={dashboardLoading}
+                />
+
+                <Button
+                  onClick={() => handleStartSession(stats.siteId)}
+                  variant="primary"
+                  size="sm"
+                >
+                  Start
+                </Button>
               </div>
-              <DashboardStats
-                dailyLimitMinutes={stats.dailyLimitMinutes}
-                remainingMinutes={stats.remainingMinutes}
-                usedMinutes={stats.usedMinutes}
-                sessionCount={stats.sessionCount}
-                loading={dashboardLoading}
-                compact
-              />
             </Surface>
           ))}
         </div>
       )}
 
-      {/* 日別利用時間グラフ */}
-      <div className="mt-6">
+      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <DailyUsageChart dailyUsageHistory={dailyUsageHistory} siteRules={settings.siteRules} />
+        <Surface variant="elevated" className="p-5">
+          <h3 className="mb-4 text-base font-semibold text-content">Recent sessions</h3>
+          <SessionHistory sessions={allSessions} />
+        </Surface>
       </div>
-
-      {/* セッション履歴 */}
-      <div className="mt-6">
-        <h3 className="text-lg font-semibold text-content mb-4">History</h3>
-        <SessionHistory sessions={allSessions} />
-      </div>
-    </Surface>
+    </div>
   );
 }

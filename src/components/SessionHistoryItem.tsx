@@ -1,6 +1,7 @@
 import { CopyButton } from "./CopyButton";
 import { FaviconBadge, Surface } from "~components/ui";
 import type { SessionRecordWithDate } from "~hooks/useDashboard";
+import { getToday } from "~lib/types";
 
 interface SessionHistoryItemProps {
   session: SessionRecordWithDate;
@@ -8,7 +9,7 @@ interface SessionHistoryItemProps {
 
 export function SessionHistoryItem({ session }: SessionHistoryItemProps) {
   const sessionDate = new Date(session.startTime);
-  const isToday = session.date === new Date().toISOString().split("T")[0];
+  const isToday = session.date === getToday();
 
   return (
     <Surface variant="inset" className="p-3 glass-hover transition-colors">

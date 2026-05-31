@@ -30,8 +30,8 @@ beforeEach(() => {
     getURL: (path: string) => `chrome-extension://test/${path.replace(/^\//, "")}`,
   },
   tabs: {
-    query: vi.fn(),
-    sendMessage: vi.fn(),
+    query: vi.fn<() => Promise<unknown[]>>(),
+    sendMessage: vi.fn<() => Promise<void>>(),
   },
 };
 

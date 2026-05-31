@@ -60,7 +60,10 @@ const handler: PlasmoMessaging.MessageHandler<
     console.error("Error saving reflection:", error);
     res.send({
       success: false,
-      error: "振り返りの保存に失敗しました",
+      error:
+        error instanceof Error && error.message
+          ? `振り返りの保存に失敗しました: ${error.message}`
+          : "振り返りの保存に失敗しました",
     });
   }
 };

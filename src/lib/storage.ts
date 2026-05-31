@@ -7,9 +7,25 @@ import type {
   SiteDailyUsage,
   SiteRule,
 } from "./types";
-import { STORAGE_KEYS, DEFAULT_SETTINGS, getToday } from "./types";
+import { STORAGE_KEYS, DEFAULT_SETTINGS, getToday, formatDate } from "./types";
+import { getElapsedMinutes } from "./timer";
+import { buildSiteRuleFromUrl, type AddSiteRuleResult } from "./site-rule";
 
 const storage = new Storage();
+const DAILY_USAGE_KEY_PREFIX = `${STORAGE_KEYS.DAILY_USAGE}:`;
+
+function getDailyUsageKey(date: string): string {
+  return `${DAILY_USAGE_KEY_PREFIX}${date}`;
+}
+
+async function getDailyUsageIndex(): Promise<string[]> {
+  const index = await storage.get<string[]>(STORAGE_KEYS.DAILY_USAGE_INDEX);
+  return Array.isArray(index) ? index : [];
+}
+
+async function saveDailyUsageIndex(index: string[]): Promise<void> {
+  await storage.set(STORAGE_KEYS.DAILY_USAGE_INDEX, index);
+}
 
 function buildDefaultSiteRulesFromLegacy(dailyLimitMinutes?: number): SiteRule[] {
   const baseRule = DEFAULT_SETTINGS.siteRules[0];
@@ -63,6 +79,25 @@ export async function getSettings(): Promise<Settings> {
 // 設定の保存
 export async function saveSettings(settings: Settings): Promise<void> {
   await storage.set(STORAGE_KEYS.SETTINGS, settings);
+}
+
+export async function addSiteRuleFromUrl(
+  rawUrl: string,
+  title?: string,
+): Promise<AddSiteRuleResult> {
+  const settings = await getSettings();
+  const result = buildSiteRuleFromUrl(settings, rawUrl, title);
+
+  if (result.status !== "added") {
+    return result;
+  }
+
+  await saveSettings({
+    ...settings,
+    siteRules: [...settings.siteRules, result.rule],
+  });
+
+  return result;
 }
 
 // 現在のセッションの取得
@@ -154,18 +189,30 @@ function normalizeDailyUsage(raw: any, defaultSiteId: string, date: string): Dai
 
 export async function getDailyUsage(date?: string): Promise<DailyUsage> {
   const targetDate = date || getToday();
-  const allDailyUsage =
-    (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
   const settings = await getSettings();
   const defaultSiteId = settings.siteRules[0]?.id || "default";
 
-  const normalized = normalizeDailyUsage(allDailyUsage[targetDate], defaultSiteId, targetDate);
-  const currentSerialized = JSON.stringify(allDailyUsage[targetDate]);
-  const normalizedSerialized = JSON.stringify(normalized);
+  const dailyUsageKey = getDailyUsageKey(targetDate);
+  const storedUsage = await storage.get<DailyUsage>(dailyUsageKey);
 
-  if (!allDailyUsage[targetDate] || currentSerialized !== normalizedSerialized) {
-    allDailyUsage[targetDate] = normalized;
-    await storage.set(STORAGE_KEYS.DAILY_USAGE, allDailyUsage);
+  if (storedUsage) {
+    const normalized = normalizeDailyUsage(storedUsage, defaultSiteId, targetDate);
+    const currentSerialized = JSON.stringify(storedUsage);
+    const normalizedSerialized = JSON.stringify(normalized);
+
+    if (currentSerialized !== normalizedSerialized) {
+      await saveDailyUsage(normalized);
+    }
+
+    return normalized;
+  }
+
+  const legacyAll = (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
+  const legacyUsage = legacyAll[targetDate];
+  const normalized = normalizeDailyUsage(legacyUsage, defaultSiteId, targetDate);
+
+  if (legacyUsage) {
+    await saveDailyUsage(normalized);
   }
 
   return normalized;
@@ -173,16 +220,20 @@ export async function getDailyUsage(date?: string): Promise<DailyUsage> {
 
 // 日次データの保存
 export async function saveDailyUsage(dailyUsage: DailyUsage): Promise<void> {
-  const allDailyUsage =
-    (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
-  allDailyUsage[dailyUsage.date] = dailyUsage;
-  await storage.set(STORAGE_KEYS.DAILY_USAGE, allDailyUsage);
+  const dailyUsageKey = getDailyUsageKey(dailyUsage.date);
+  await storage.set(dailyUsageKey, dailyUsage);
+
+  const index = await getDailyUsageIndex();
+  if (!index.includes(dailyUsage.date)) {
+    index.push(dailyUsage.date);
+    await saveDailyUsageIndex(index);
+  }
 }
 
 // セッション記録の追加
 export async function addSessionRecord(record: SessionRecord): Promise<void> {
-  const today = getToday();
-  const dailyUsage = await getDailyUsage(today);
+  const usageDate = formatDate(new Date(record.startTime));
+  const dailyUsage = await getDailyUsage(usageDate);
   const siteId = record.siteId;
 
   if (!dailyUsage.siteUsage[siteId]) {
@@ -197,18 +248,49 @@ export async function addSessionRecord(record: SessionRecord): Promise<void> {
 
 // 全日次データの取得（履歴表示用）
 export async function getAllDailyUsage(): Promise<DailyUsage[]> {
-  const allDailyUsage =
-    (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
   const settings = await getSettings();
   const defaultSiteId = settings.siteRules[0]?.id || "default";
+  const index = await getDailyUsageIndex();
   const normalizedEntries: Record<string, DailyUsage> = {};
 
-  for (const [date, usage] of Object.entries(allDailyUsage)) {
-    normalizedEntries[date] = normalizeDailyUsage(usage, defaultSiteId, date);
+  if (index.length > 0) {
+    const records = await Promise.all(
+      index.map(async (date) => {
+        const usage = await storage.get<DailyUsage>(getDailyUsageKey(date));
+        if (!usage) {
+          return { date, usage: null };
+        }
+
+        const normalized = normalizeDailyUsage(usage, defaultSiteId, date);
+        if (JSON.stringify(usage) !== JSON.stringify(normalized)) {
+          await saveDailyUsage(normalized);
+        }
+
+        return { date, usage: normalized };
+      }),
+    );
+    const existingDates: string[] = [];
+    records.forEach((record) => {
+      if (record.usage) {
+        normalizedEntries[record.usage.date] = record.usage;
+        existingDates.push(record.date);
+      }
+    });
+    if (existingDates.length !== index.length) {
+      await saveDailyUsageIndex(existingDates);
+    }
   }
 
-  if (JSON.stringify(allDailyUsage) !== JSON.stringify(normalizedEntries)) {
-    await storage.set(STORAGE_KEYS.DAILY_USAGE, normalizedEntries);
+  const legacyAll = (await storage.get<Record<string, DailyUsage>>(STORAGE_KEYS.DAILY_USAGE)) || {};
+  const legacyDates = Object.keys(legacyAll);
+
+  if (legacyDates.length > 0) {
+    for (const [date, usage] of Object.entries(legacyAll)) {
+      const normalized = normalizeDailyUsage(usage, defaultSiteId, date);
+      normalizedEntries[normalized.date] = normalized;
+      await saveDailyUsage(normalized);
+    }
+    await storage.remove(STORAGE_KEYS.DAILY_USAGE);
   }
 
   return Object.values(normalizedEntries).sort((a, b) => b.date.localeCompare(a.date));
@@ -227,8 +309,7 @@ export async function getRemainingMinutes(siteId: string): Promise<number> {
 
   // 現在アクティブなセッションの使用時間を加算（同じサイトのみ）
   if (currentSession && currentSession.isActive && currentSession.siteId === siteId) {
-    const elapsedSeconds = currentSession.durationMinutes * 60 - currentSession.remainingSeconds;
-    usedMinutes += Math.floor(elapsedSeconds / 60);
+    usedMinutes += getElapsedMinutes(currentSession);
   }
 
   return Math.max(0, dailyLimit - usedMinutes);

@@ -4,7 +4,7 @@ import { useReflection } from "../useReflection";
 import { sendToBackground } from "@plasmohq/messaging";
 
 vi.mock("@plasmohq/messaging", () => ({
-  sendToBackground: vi.fn(),
+  sendToBackground: vi.fn<() => Promise<unknown>>(),
 }));
 
 const mockSendToBackground = vi.mocked(sendToBackground);

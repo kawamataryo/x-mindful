@@ -21,6 +21,10 @@ export function createSession(durationMinutes: number, siteId: string, siteUrl?:
  * 壁時計ベースでセッションの残り時間を計算
  */
 export function getRemainingSeconds(session: Session, now = Date.now()): number {
+  if (!session.isActive) {
+    return Math.max(0, session.remainingSeconds);
+  }
+
   const totalSeconds = session.durationMinutes * 60;
   const elapsedSeconds = Math.max(0, Math.floor((now - session.startTime) / 1000));
   return Math.max(0, totalSeconds - elapsedSeconds);
@@ -49,6 +53,7 @@ export function isSessionExpired(session: Session): boolean {
 export function pauseSession(session: Session): Session {
   return {
     ...session,
+    remainingSeconds: getRemainingSeconds(session),
     isActive: false,
   };
 }
@@ -57,8 +62,12 @@ export function pauseSession(session: Session): Session {
  * セッションを再開
  */
 export function resumeSession(session: Session): Session {
+  const totalSeconds = session.durationMinutes * 60;
+  const elapsedSeconds = Math.max(0, totalSeconds - session.remainingSeconds);
+
   return {
     ...session,
+    startTime: Date.now() - elapsedSeconds * 1000,
     isActive: true,
   };
 }

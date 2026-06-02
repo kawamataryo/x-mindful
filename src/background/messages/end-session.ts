@@ -25,7 +25,7 @@ const handler: PlasmoMessaging.MessageHandler<EndSessionRequest, EndSessionRespo
       return;
     }
 
-    if (currentSession.isActive) {
+    if (getElapsedMinutes(currentSession) > 0) {
       const record: SessionRecord = {
         id: currentSession.id,
         startTime: currentSession.startTime,

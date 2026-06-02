@@ -54,12 +54,12 @@ const handler: PlasmoMessaging.MessageHandler<StartSessionRequest, StartSessionR
       return;
     }
 
-    // 既存のアクティブセッションがないかチェック
+    // 既存の進行中セッションがないかチェック
     const existingSession = await getCurrentSession();
-    if (existingSession && existingSession.isActive && existingSession.remainingSeconds > 0) {
+    if (existingSession && existingSession.remainingSeconds > 0) {
       res.send({
         success: false,
-        error: "既にアクティブなセッションが存在します",
+        error: "既に進行中のセッションが存在します",
       });
       return;
     }

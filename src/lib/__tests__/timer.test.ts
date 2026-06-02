@@ -6,6 +6,8 @@ import {
   getRemainingSeconds,
   isSessionExpired,
   isSessionToday,
+  pauseSession,
+  resumeSession,
   updateSessionRemainingTime,
 } from "../timer";
 
@@ -43,6 +45,58 @@ describe("timer", () => {
 
     expect(getRemainingSeconds(session, start + 15_000)).toBe(45);
     expect(updateSessionRemainingTime(session, start + 75_000).remainingSeconds).toBe(0);
+  });
+
+  it("does not decrease remaining seconds while paused", () => {
+    const start = new Date(2026, 0, 15, 10, 0, 0).getTime();
+    const pausedSession = {
+      id: "s",
+      startTime: start,
+      durationMinutes: 1,
+      remainingSeconds: 45,
+      isActive: false,
+      siteId: "x",
+    };
+
+    expect(getRemainingSeconds(pausedSession, start + 30_000)).toBe(45);
+    expect(updateSessionRemainingTime(pausedSession, start + 30_000).remainingSeconds).toBe(45);
+  });
+
+  it("stores current remaining seconds when pausing", () => {
+    vi.useFakeTimers();
+    const start = new Date(2026, 0, 15, 10, 0, 0).getTime();
+    vi.setSystemTime(start + 15_000);
+
+    const pausedSession = pauseSession({
+      id: "s",
+      startTime: start,
+      durationMinutes: 1,
+      remainingSeconds: 60,
+      isActive: true,
+      siteId: "x",
+    });
+
+    expect(pausedSession.isActive).toBe(false);
+    expect(pausedSession.remainingSeconds).toBe(45);
+  });
+
+  it("resumes from the stored remaining seconds", () => {
+    vi.useFakeTimers();
+    const now = new Date(2026, 0, 15, 10, 0, 30).getTime();
+    vi.setSystemTime(now);
+
+    const resumedSession = resumeSession({
+      id: "s",
+      startTime: now - 30_000,
+      durationMinutes: 1,
+      remainingSeconds: 45,
+      isActive: false,
+      siteId: "x",
+    });
+
+    expect(resumedSession.isActive).toBe(true);
+    expect(resumedSession.startTime).toBe(now - 15_000);
+    expect(getRemainingSeconds(resumedSession, now + 10_000)).toBe(35);
   });
 
   it("computes elapsed minutes from wall-clock time with duration bounds", () => {

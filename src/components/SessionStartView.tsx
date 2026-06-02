@@ -32,7 +32,7 @@ export function SessionStartView() {
   }, [loadSessionStartData]);
 
   // 既にセッション中なら「再開」導線を出す
-  if (activeSession && activeSession.isActive && activeSession.remainingSeconds > 0) {
+  if (activeSession && activeSession.remainingSeconds > 0) {
     const remaining = formatTime(activeSession.remainingSeconds);
     return (
       <div className="flex min-h-screen items-center justify-center bg-mesh p-4">

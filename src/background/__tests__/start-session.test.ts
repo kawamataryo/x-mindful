@@ -45,7 +45,30 @@ describe("start-session message", () => {
 
     expect(response).toEqual({
       success: false,
-      error: "既にアクティブなセッションが存在します",
+      error: "既に進行中のセッションが存在します",
+    });
+  });
+
+  it("rejects a paused session with remaining time", async () => {
+    const storageMap = getStorageMap();
+    storageMap.set(STORAGE_KEYS.CURRENT_SESSION, {
+      id: "existing",
+      startTime: Date.now() - 30_000,
+      durationMinutes: 10,
+      remainingSeconds: 570,
+      isActive: false,
+      siteId: "x",
+    } satisfies Session);
+
+    const response = await sendStartSession({
+      durationMinutes: 1,
+      siteId: "x",
+      siteUrl: "https://x.com/home",
+    });
+
+    expect(response).toEqual({
+      success: false,
+      error: "既に進行中のセッションが存在します",
     });
   });
 

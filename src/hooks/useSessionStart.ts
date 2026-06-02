@@ -38,7 +38,9 @@ export function useSessionStart() {
       setSiteRules(currentSettings.siteRules);
 
       const currentSession = await getCurrentSession();
-      setActiveSession(currentSession && currentSession.isActive ? currentSession : null);
+      setActiveSession(
+        currentSession && currentSession.remainingSeconds > 0 ? currentSession : null,
+      );
 
       const params = new URLSearchParams(window.location.search);
       const siteIdParam = params.get("siteId");
@@ -113,9 +115,9 @@ export function useSessionStart() {
   // セッション開始
   const handleStartSession = useCallback(
     async (minutesParam?: number) => {
-      // 既にアクティブなセッションがある場合は再開扱いにする
+      // 既に進行中のセッションがある場合は再開扱いにする
       const currentSession = await getCurrentSession();
-      if (currentSession && currentSession.isActive && currentSession.remainingSeconds > 0) {
+      if (currentSession && currentSession.remainingSeconds > 0) {
         const redirectUrl = getRedirectUrl(currentSession.siteId, currentSession.siteUrl);
         if (redirectUrl) {
           window.location.replace(redirectUrl);

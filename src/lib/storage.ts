@@ -307,8 +307,8 @@ export async function getRemainingMinutes(siteId: string): Promise<number> {
   const siteUsage = dailyUsage.siteUsage[siteId] || buildEmptySiteUsage(siteId);
   let usedMinutes = siteUsage.totalUsedMinutes;
 
-  // 現在アクティブなセッションの使用時間を加算（同じサイトのみ）
-  if (currentSession && currentSession.isActive && currentSession.siteId === siteId) {
+  // 現在進行中のセッションの使用時間を加算（同じサイトのみ）
+  if (currentSession && currentSession.remainingSeconds > 0 && currentSession.siteId === siteId) {
     usedMinutes += getElapsedMinutes(currentSession);
   }
 

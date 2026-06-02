@@ -5,7 +5,13 @@ import {
   initializeStorage,
   getSettings,
 } from "~lib/storage";
-import { updateSessionRemainingTime, isSessionExpired, isSessionToday } from "~lib/timer";
+import {
+  updateSessionRemainingTime,
+  isSessionExpired,
+  isSessionToday,
+  pauseSession,
+  resumeSession,
+} from "~lib/timer";
 import { matchSiteRule } from "~lib/url-matcher";
 import { getToday, isSession, STORAGE_KEYS } from "~lib/types";
 import { buildReflectionUrl, buildStartSessionUrl } from "~lib/extension-urls";
@@ -82,6 +88,61 @@ function stopTimer() {
   if (timerInterval) {
     clearInterval(timerInterval);
     timerInterval = null;
+  }
+}
+
+async function isTabTargetSession(tabUrl: string | undefined, siteId: string): Promise<boolean> {
+  if (!tabUrl) {
+    return false;
+  }
+
+  const settings = await getSettings();
+  const matchedRule = matchSiteRule(tabUrl, settings.siteRules, settings.globalExcludePatterns);
+  return matchedRule?.id === siteId;
+}
+
+async function pauseCurrentSession() {
+  const session = await getCurrentSession();
+  if (!session || !session.isActive || session.remainingSeconds <= 0) {
+    stopTimer();
+    return;
+  }
+
+  const pausedSession = pauseSession(session);
+  await saveCurrentSession(pausedSession);
+  stopTimer();
+}
+
+async function resumeCurrentSession() {
+  const session = await getCurrentSession();
+  if (!session || session.isActive || session.remainingSeconds <= 0) {
+    return;
+  }
+
+  const resumedSession = resumeSession(session);
+  await saveCurrentSession(resumedSession);
+  startTimer();
+}
+
+async function syncSessionWithFocusedTab() {
+  const session = await getCurrentSession();
+  if (!session || session.remainingSeconds <= 0) {
+    stopTimer();
+    return;
+  }
+
+  const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
+  const activeTab = activeTabs[0];
+  const isTarget = await isTabTargetSession(activeTab?.url, session.siteId);
+
+  if (isTarget) {
+    if (!session.isActive) {
+      await resumeCurrentSession();
+    } else {
+      startTimer();
+    }
+  } else if (session.isActive) {
+    await pauseCurrentSession();
   }
 }
 
@@ -163,18 +224,23 @@ const handleTabUpdate: TabUpdateHandler = async (tabId, changeInfo, tab) => {
     );
     console.log("[Site Blocker] Matched rule:", matchedRule?.id || "none");
 
+    const activeTabs = await chrome.tabs.query({ active: true, currentWindow: true });
+    const isActiveFocusedTab = activeTabs.some((activeTab) => activeTab.id === tabId);
+
     // 対象サイトへのアクセスを検出
     if (matchedRule) {
       const session = await getCurrentSession();
       console.log("[Site Blocker] Current session:", session);
 
+      if (session && session.remainingSeconds > 0 && session.siteId === matchedRule.id) {
+        if (isActiveFocusedTab) {
+          await resumeCurrentSession();
+        }
+        return;
+      }
+
       // アクティブなセッションがない場合、タブをoptionsページのセッション開始画面に遷移
-      if (
-        !session ||
-        !session.isActive ||
-        session.remainingSeconds <= 0 ||
-        session.siteId !== matchedRule.id
-      ) {
+      if (!session || session.remainingSeconds <= 0 || session.siteId !== matchedRule.id) {
         console.log("[Site Blocker] No active session, redirecting to start-session");
         await chrome.tabs.update(tabId, {
           url: buildStartSessionUrl(matchedRule.id, currentUrl),
@@ -184,7 +250,11 @@ const handleTabUpdate: TabUpdateHandler = async (tabId, changeInfo, tab) => {
 
       // アクティブなセッションがある場合はタイマーを開始
       console.log("[Site Blocker] Active session found, starting timer");
-      startTimer();
+      if (isActiveFocusedTab) {
+        startTimer();
+      }
+    } else if (isActiveFocusedTab) {
+      await pauseCurrentSession();
     }
   }
 };
@@ -215,9 +285,7 @@ async function restoreState() {
 
     await saveCurrentSession(updatedSession);
 
-    if (updatedSession.isActive && updatedSession.remainingSeconds > 0) {
-      startTimer();
-    }
+    await syncSessionWithFocusedTab();
   } catch (error) {
     console.error("Error restoring state:", error);
   }
@@ -291,6 +359,31 @@ chrome.runtime.onInstalled.addListener(() => {
 
 chrome.tabs.onUpdated.addListener(handleTabUpdate);
 
+chrome.tabs.onActivated.addListener(() => {
+  syncSessionWithFocusedTab().catch((error) => {
+    console.error("Error syncing session on tab activation:", error);
+  });
+});
+
+chrome.tabs.onRemoved.addListener(() => {
+  syncSessionWithFocusedTab().catch((error) => {
+    console.error("Error syncing session on tab removal:", error);
+  });
+});
+
+chrome.windows.onFocusChanged.addListener((windowId) => {
+  if (windowId === chrome.windows.WINDOW_ID_NONE) {
+    pauseCurrentSession().catch((error) => {
+      console.error("Error pausing session on window blur:", error);
+    });
+    return;
+  }
+
+  syncSessionWithFocusedTab().catch((error) => {
+    console.error("Error syncing session on window focus:", error);
+  });
+});
+
 // タブが作成された時もチェック
 chrome.tabs.onCreated.addListener(async (tab) => {
   if (tab.id && tab.url) {
@@ -301,7 +394,7 @@ chrome.tabs.onCreated.addListener(async (tab) => {
     if (matchedRule) {
       const session = await getCurrentSession();
 
-      if (!session || !session.isActive || session.remainingSeconds <= 0) {
+      if (!session || session.remainingSeconds <= 0 || session.siteId !== matchedRule.id) {
         console.log("[Site Blocker] Redirecting new tab to start-session");
         await chrome.tabs.update(tab.id, {
           url: buildStartSessionUrl(matchedRule.id, tab.url),
